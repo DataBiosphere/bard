@@ -37,7 +37,7 @@ const sendToMixpanel = async (token, event, props) => {
   try {
     await fetch(`${mixPanelRoot}/track?data=${data}`)
   } catch (error) {
-    console.log(`Failed to log ${data} to mixpanel`)
+    console.error(`Failed to log ${data} to mixpanel`)
   }
 }
 
