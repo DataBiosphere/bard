@@ -8,13 +8,13 @@ them to to an analytics service so we can determine how our users utilize our ap
 ## Typical Usage
 1. Call ```event``` to log a user's action and send the event to mixpanel.
 
-      Only event on the production system will be sent to mixpanel
+      Only events on the production system will be sent to mixpanel
 
 ## Authentication
 1. The service will only accept requests from users who are registered with our application
 
 ## Developing
-Note that there is currently no separate development environment, so any changes will affect the real system (e.g. if you enable the mixpanel API with a token, events will get pushed to mixpanel). Use caution.
+Note that there is currently no separate development environment for mixpanel, so any changes will affect the real system. If you enable the mixpanel API with a token, events will get pushed to mixpanel. Use caution.
 
 1. Download a key for the app engine default service account terra-metrics-dev@appspot.gserviceaccount.com and note the location
 2. Install the dependencies
