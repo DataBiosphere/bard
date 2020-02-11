@@ -1,7 +1,7 @@
 {
   "name": "bard",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
   "license": "MIT",
   "dependencies": {
     "@google-cloud/logging": "^7.0.0",
