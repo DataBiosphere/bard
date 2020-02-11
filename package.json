@@ -1,0 +1,27 @@
+{
+  "name": "bard",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/logging": "^7.0.0",
+    "@google-cloud/secret-manager": "^1.2.0",
+    "body-parser": "^1.19.0",
+    "btoa-lite": "^1.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "lodash": "^4.17.15",
+    "node-fetch": "^2.6.0"
+  },
+  "scripts": {
+    "generate-docs": "apidoc -i src -o docs",
+    "lint": "eslint \"src/**/*.js\"",
+    "start": "node src/server.js",
+    "start-dev": "nodemon"
+  },
+  "devDependencies": {
+    "apidoc": "^0.19.0",
+    "eslint": "^6.7.2",
+    "nodemon": "^2.0.1"
+  }
+}
