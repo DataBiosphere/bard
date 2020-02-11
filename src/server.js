@@ -64,7 +64,7 @@ const main = async () => {
   }))
 
   /**
-   * @api {post} /event System status
+   * @api {post} /event Log a user event
    * @apiDescription Records the event to a log and forwards it to mixpanel
    * @apiName event
    * @apiVersion 1.0.0
