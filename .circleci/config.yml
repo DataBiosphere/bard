@@ -25,7 +25,7 @@ commands:
     steps:
       - attach_workspace:
           at: .
-      - run: pwd ; ls -al ; cp config/<< parameters.env >>.json config.json
+      - run: cp config/<< parameters.env >>.json config.json
       - run: echo "$<< parameters.sa_key_var >>" > /tmp/sa.json
       - run: gcloud auth activate-service-account --key-file=/tmp/sa.json
       - run: gcloud app deploy --project=terra-bard-<< parameters.env >> --promote --quiet
