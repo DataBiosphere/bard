@@ -25,7 +25,7 @@ commands:
     steps:
       - attach_workspace:
           at: .
-      - run: cp config/<< parameters.env >>.json config.json
+      - run: pwd ; ls -al ; cp config/<< parameters.env >>.json config.json
       - run: echo "$<< parameters.sa_key_var >>" > /tmp/sa.json
       - run: gcloud auth activate-service-account --key-file=/tmp/sa.json
       - run: gcloud app deploy --project=terra-bard-<< parameters.env >> --promote --quiet
@@ -46,6 +46,14 @@ jobs:
             - ~/.cache/yarn
       - run: yarn lint
       - run: yarn generate-docs
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .gcloudignore
+            - app.yaml
+            - config
+            - docs
+            - node_modules
   deploy-dev:
     executor: gcloud
     steps: 
