@@ -1,5 +1,35 @@
 version: 2.1
 
+executors:
+  node:
+    docker:
+      - image: node:12
+        user: node
+  gcloud:
+    docker:
+      - image: google/cloud-sdk:alpine
+
+commands:
+  deploy-env:
+    description: "Deploy to a specific environment"
+    parameters:
+      sa_key_var:
+        type: string
+        default: "SA_KEY_JSON"
+      env:
+        type: string
+        default: "dev"
+      pr:
+        type: boolean
+        default: false
+    steps:
+      - attach_workspace:
+          at: .
+      - run: cp config/<< parameters.env >>.json config.json
+      - run: echo "$<< parameters.sa_key_var >>" > /tmp/sa.json
+      - run: gcloud auth activate-service-account --key-file=/tmp/sa.json
+      - run: gcloud app deploy --project=terra-bard-<< parameters.env >> --promote --quiet
+
 jobs:
   build:
     docker:
@@ -15,3 +45,16 @@ jobs:
             - node_modules
             - ~/.cache/yarn
       - run: yarn lint
+  deploy-dev:
+    executor: gcloud
+    steps: 
+      - deploy-env
+
+workflows:
+  version: 2
+  build-deploy: 
+    jobs: 
+      - build
+      - deploy-dev:
+          requires:
+            - build
