@@ -45,10 +45,12 @@ jobs:
             - node_modules
             - ~/.cache/yarn
       - run: yarn lint
+      - run: yarn generate-docs
   deploy-dev:
     executor: gcloud
     steps: 
-      - deploy-env
+      - deploy-env:
+          sa_key_var: "DEV_SA_KEY_JSON"
 
 workflows:
   version: 2
