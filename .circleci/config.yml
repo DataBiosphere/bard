@@ -32,8 +32,7 @@ commands:
 
 jobs:
   build:
-    docker:
-      - image: node:12
+    executor: node
     steps:
       - checkout
       - restore_cache:
@@ -42,7 +41,6 @@ jobs:
       - save_cache:
           key: v1-{{ checksum "yarn.lock" }}
           paths:
-            - node_modules
             - ~/.cache/yarn
       - run: yarn lint
       - run: yarn generate-docs
@@ -53,7 +51,6 @@ jobs:
             - app.yaml
             - config
             - docs
-            - node_modules
             - .gitignore
   deploy-dev:
     executor: gcloud
