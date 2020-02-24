@@ -51,6 +51,7 @@ jobs:
             - app.yaml
             - config
             - docs
+            - node_modules
             - .gitignore
   deploy-dev:
     executor: gcloud
