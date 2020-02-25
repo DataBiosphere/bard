@@ -25,6 +25,7 @@ commands:
     steps:
       - attach_workspace:
           at: .
+      - checkout
       - run: cp config/<< parameters.env >>.json config.json
       - run: echo "$<< parameters.sa_key_var >>" > /tmp/sa.json
       - run: gcloud auth activate-service-account --key-file=/tmp/sa.json
@@ -47,13 +48,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - .gcloudignore
-            - app.yaml
-            - config
             - docs
-            - src
             - node_modules
-            - .gitignore
   deploy-dev:
     executor: gcloud
     steps: 
