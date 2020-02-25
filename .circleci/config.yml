@@ -15,7 +15,6 @@ commands:
     parameters:
       sa_key_var:
         type: string
-        default: "SA_KEY_JSON"
       env:
         type: string
         default: "dev"
