@@ -51,6 +51,7 @@ jobs:
             - app.yaml
             - config
             - docs
+            - src
             - node_modules
             - .gitignore
   deploy-dev:
