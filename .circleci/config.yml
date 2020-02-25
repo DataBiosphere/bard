@@ -23,9 +23,12 @@ commands:
         type: boolean
         default: false
     steps:
-      - attach_workspace:
-          at: .
       - checkout
+      - run: mkdir tmp ; touch tmp/foo
+      - attach_workspace:
+          at: tmp
+      - run: mv tmp/* .
+      - run: rmdir tmp
       - run: cp config/<< parameters.env >>.json config.json
       - run: echo "$<< parameters.sa_key_var >>" > /tmp/sa.json
       - run: gcloud auth activate-service-account --key-file=/tmp/sa.json
