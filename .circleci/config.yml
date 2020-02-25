@@ -23,7 +23,7 @@ commands:
         default: false
     steps:
       - checkout
-      - run: mkdir tmp ; touch tmp/foo
+      - run: mkdir tmp
       - attach_workspace:
           at: tmp
       - run: mv tmp/* .
