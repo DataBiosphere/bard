@@ -42,7 +42,7 @@ const sendToMixpanel = async (token, event, props) => {
 }
 
 const main = async () => {
-  const token = await getSecret({ project, secretName: 'mixpanel-test-api' })
+  const token = await getSecret({ project, secretName: 'mixpanel-api' })
   const log = logger({ project, logName: 'metrics' })
 
   const app = express()
