@@ -36,10 +36,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: $CACHE_VERSION-{{ checksum "yarn.lock" }}
+          key: 1-{{ checksum "yarn.lock" }}
       - run: yarn install --frozen-lockfile
       - save_cache:
-          key: $CACHE_VERSION-{{ checksum "yarn.lock" }}
+          key: 1-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
       - run: yarn lint
