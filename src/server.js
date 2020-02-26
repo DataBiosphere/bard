@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const { promiseHandler, Response } = require('./utils')
-const { project, samRoot, mixPanelRoot } = require('../config')
+const { project, samRoot } = require('../config')
 const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
@@ -35,7 +35,7 @@ const withAuth = wrappedFn => async (req, ...args) => {
 const sendToMixpanel = async (token, event, props) => {
   const data = btoa(JSON.stringify({ event, properties: { token, ...props } }))
   try {
-    await fetch(`${mixPanelRoot}/track?data=${data}`)
+    await fetch(`https://api.mixpanel.com/track?data=${data}`)
   } catch (error) {
     console.error(`Failed to log ${data} to mixpanel`)
   }
