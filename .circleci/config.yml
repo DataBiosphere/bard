@@ -80,25 +80,25 @@ workflows:
       - deploy-dev:
           requires:
             - build
-          # filters:
-            # branches:
-              # only: dev
+          filters:
+            branches:
+              only: dev
       - deploy-alpha:
           requires:
             - build
-          # filters:
-            # branches:
-              # only: dev
+          filters:
+            branches:
+              only: dev
       - deploy-staging:
           requires:
             - build
-          # filters:
-            # branches:
-              # only: dev
+          filters:
+            branches:
+              only: dev
       - deploy-perf:
           requires:
             - build
-          # filters:
-            # branches:
-              # only: dev
+          filters:
+            branches:
+              only: dev
                          
