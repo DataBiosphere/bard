@@ -1,5 +1,0 @@
-{
-  "project": "terra-metrics-dev",
-  "samRoot": "https://sam.dsde-dev.broadinstitute.org",
-  "mixPanelRoot": "https://api.mixpanel.com"
-}
