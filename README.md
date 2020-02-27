@@ -26,7 +26,7 @@ Note that there is currently no separate development environment for mixpanel, s
 3. Start a dev server on port 8080 with auto-reload
 
     ```sh
-    GCP_PROJECT=terra-dev-metrics GOOGLE_APPLICATION_CREDENTIALS=<path-to-key-file> yarn run start-dev
+    GCP_PROJECT=terra-bard-dev GOOGLE_APPLICATION_CREDENTIALS=<path-to-key-file> yarn run start-dev
     ```
 
 4. Lint any code changes using 
