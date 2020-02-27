@@ -54,7 +54,24 @@ jobs:
     steps: 
       - deploy-env:
           sa_key_var: "DEV_SA_KEY_JSON"
-
+  deploy-alpha:
+    executor: gcloud
+    steps: 
+      - deploy-env:
+          sa_key_var: "ALPHA_SA_KEY_JSON"
+          env: "alpha"
+  deploy-staging:
+    executor: gcloud
+    steps: 
+      - deploy-env:
+          sa_key_var: "STAGING_SA_KEY_JSON"
+          env: "staging"
+  deploy-perf:
+    executor: gcloud
+    steps: 
+      - deploy-env:
+          sa_key_var: "PERF_SA_KEY_JSON"
+          env: "perf"
 workflows:
   version: 2
   build-deploy: 
@@ -63,3 +80,25 @@ workflows:
       - deploy-dev:
           requires:
             - build
+          filters:
+            branches:
+              only: master
+      - deploy-alpha:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-perf:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+                         
