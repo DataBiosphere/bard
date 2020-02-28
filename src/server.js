@@ -86,6 +86,7 @@ const main = async () => {
   app.post('/api/event', promiseHandler(withAuth(async req => {
     const { event, properties } = req.body
 
+    console.log('is this thing on')
     validateInput(req.body, Joi.object().keys({ event: eventSchema, properties: propertiesSchema }))
 
     log(req.body)
