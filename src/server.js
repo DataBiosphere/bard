@@ -76,6 +76,8 @@ const main = async () => {
   app.post('/api/event', promiseHandler(withAuth(async req => {
     const { event, properties } = req.body
 
+    // do the validating
+
     log(req.body)
     token && sendToMixpanel(token, event, properties)
 
