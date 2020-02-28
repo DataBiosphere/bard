@@ -1,11 +1,12 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { promiseHandler, Response } = require('./utils')
+const { promiseHandler, Response, validateInput } = require('./utils')
 const { project, samRoot } = require('../config')
 const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
+const Joi = require('@hapi/joi')
 
 
 const withAuth = wrappedFn => async (req, ...args) => {
@@ -63,6 +64,17 @@ const main = async () => {
     return new Response(200)
   }))
 
+  const eventSchema = Joi.string().required()
+  const propertiesSchema = Joi.object({
+    time: Joi.date().timestamp().required(),
+    /*
+     location within app
+     app ID
+     anonymized user id
+     */
+    metadata: Joi.object()
+  }).required()
+
   /**
    * @api {post} /event Log a user event
    * @apiDescription Records the event to a log and forwards it to mixpanel
@@ -76,7 +88,7 @@ const main = async () => {
   app.post('/api/event', promiseHandler(withAuth(async req => {
     const { event, properties } = req.body
 
-    // do the validating
+    validateInput(req.body, Joi.object().keys({ event: eventSchema, properties: propertiesSchema }))
 
     log(req.body)
     token && sendToMixpanel(token, event, properties)
