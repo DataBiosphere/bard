@@ -66,12 +66,10 @@ const main = async () => {
 
   const eventSchema = Joi.string().required()
   const propertiesSchema = Joi.object({
-    time: Joi.date().timestamp().required(),
-    /*
-     location within app
-     app ID
-     anonymized user id
-     */
+    userId: Joi.string().required(),
+    appId: Joi.string().required(),
+    appPath: Joi.string().required(),
+    timestamp: Joi.date().timestamp().required(),
     metadata: Joi.object()
   }).required()
 
