@@ -18,8 +18,6 @@ const promiseHandler = fn => (req, res) => {
 }
 
 const validateInput = (value, schema) => {
-  console.log('value', value)
-  console.log(schema)
   const { error } = schema.validate(value)
   if (error) {
     throw new Response(400, error.message)
