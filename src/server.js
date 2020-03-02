@@ -71,7 +71,7 @@ const main = async () => {
     appPath: Joi.string().required(),
     timestamp: Joi.date().timestamp().required(),
     metadata: Joi.object()
-  }).required()
+  }).required().unknown(true)
 
   /**
    * @api {post} /event Log a user event
