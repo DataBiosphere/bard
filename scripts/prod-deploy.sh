@@ -3,5 +3,6 @@ set -eo pipefail
 yarn install
 yarn lint
 yarn generate-docs
-cp config/config.prod.json ./
-gcloud app deploy --project=terra-bard-prod
+cp config/prod.json config.json
+gcloud app deploy --project=terra-bard --promote --quiet
+rm config.json
