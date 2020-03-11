@@ -69,8 +69,7 @@ const main = async () => {
     userId: Joi.string().required(),
     appId: Joi.string().required(),
     appPath: Joi.string().required(),
-    timestamp: Joi.date().timestamp().required(),
-    metadata: Joi.object()
+    timestamp: Joi.date().timestamp().required()
   }).required().unknown(true)
 
   /**
@@ -86,7 +85,7 @@ const main = async () => {
   app.post('/api/event', promiseHandler(withAuth(async req => {
     const { event, properties } = req.body
 
-    validateInput(req.body, Joi.object().keys({ event: eventSchema, properties: propertiesSchema }))
+    validateInput(req.body, Joi.object({ event: eventSchema, properties: propertiesSchema }))
 
     log(req.body)
     token && sendToMixpanel(token, event, properties)
