@@ -79,7 +79,7 @@ const main = async () => {
     log(req.body)
     token && sendToMixpanel(token, event, properties)
 
-    return new Response(200, { event, properties })
+    return new Response(200)
   })))
 }
 
