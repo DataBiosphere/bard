@@ -74,12 +74,12 @@ const main = async () => {
 
   /**
    * @api {post} /event Log a user event
-   * @apiDescription Records the event to a log and forwards it to mixpanel.
+   * @apiDescription Records the event to a log and forwards it to mixpanel
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
    * @apiParam {String} event Name of the event
-   * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be added
+   * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be used
    * @apiParam {String} properties.userId The anonymized ID of the user
    * @apiParam {String} properties.appId The application
    * @apiParam {String} properties.appPath The navigational path in the application the user is on, with identifying parameters removed
