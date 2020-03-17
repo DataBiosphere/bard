@@ -76,17 +76,17 @@
   resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-1.0.4.tgz#ce86ffa94f9cfafa2e68f7b3e4a7fad194189723"
   integrity sha512-VccZDcOql77obTnFh0TbNED/6ZbbmHDf8UMNnzO1d5g9V0Htfm4k5cllY8P1tJsRKC3zWYGRLaViiupcgVjBoQ==
 
-"@google-cloud/secret-manager@^1.2.0":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@google-cloud/secret-manager/-/secret-manager-1.2.1.tgz#a2f0bd91709c490b52dc049ba679a599abfac715"
-  integrity sha512-nYfurXYAFi09/xHImqB9erQ4qtWsYTWBcOO5SDnJ3BJ2x7n4c02Qgy6wA7v7nHBY0BDwBKySI+Y5tbtGatOQOA==
+"@google-cloud/secret-manager@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/secret-manager/-/secret-manager-2.1.0.tgz#88aac34c1d2db667ec48f63e11b35a1a8bd3921d"
+  integrity sha512-/KcTjQNtSdahZPPk5kIA8z5lyOludHlhRFjPc7wKrDlF2yBE2G8PTu4pUfnNT4D8daVDIS5HwzFJNTIDUmgwkA==
   dependencies:
     google-gax "^1.12.0"
 
-"@grpc/grpc-js@^0.6.18":
-  version "0.6.18"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-0.6.18.tgz#ba3b3dfef869533161d192a385412a4abd0db127"
-  integrity sha512-uAzv/tM8qpbf1vpx1xPMfcUMzbfdqJtdCYAqY/LsLeQQlnTb4vApylojr+wlCyr7bZeg3AFfHvtihnNOQQt/nA==
+"@grpc/grpc-js@^0.7.0":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-0.7.1.tgz#c450355edc83e3c5a5feb7d68153c38980fb9ae8"
+  integrity sha512-73LXh4Xop+Kef3Cyu36znbgInQeJVKu0Gt6ly+DWFe5BPR7Cx5lpmAL3QCtg/YWxHP3av43mLxucECu3uD4xIQ==
   dependencies:
     semver "^6.2.0"
 
@@ -342,7 +342,7 @@ anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-apidoc-core@^0.11.0:
+apidoc-core@^0.11.1:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/apidoc-core/-/apidoc-core-0.11.1.tgz#b04a7e0292e4ac0d714b40789f1b92f414486c81"
   integrity sha512-pt/ICBdFQCZTgL38Aw1XB3G9AajDU1JA5E3yoDEgg0mqbPTCkOL8AyWdysjvNtQS/kkXgSPazCZaZzZYqrPHog==
@@ -354,16 +354,17 @@ apidoc-core@^0.11.0:
     lodash "~4.17.15"
     semver "~6.3.0"
 
-apidoc@^0.19.0:
-  version "0.19.1"
-  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.19.1.tgz#a70fc1288823528721e6f9258a55d65a06cf79f7"
-  integrity sha512-JkJkKxJgmud5ivkehSbl5vY5cjhkNX4senwAAQa8iDo0MrdTAWSrPfAgUlM/uVjjDnNsX0daty8Yd2yYwwAMEw==
+apidoc@^0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.20.1.tgz#b29a2e2ae47e2df6a29e1f1527b94edf91853072"
+  integrity sha512-V54vkZ2lDFBiGn0qusZmHbMi4svuFBq0rjZAIe3nwYvBY7iztW78vKOyHyTr9ASaTB7EGe8hhLbpEnYAIO31TQ==
   dependencies:
-    apidoc-core "^0.11.0"
+    apidoc-core "^0.11.1"
     commander "^2.20.0"
     fs-extra "^8.1.0"
     lodash "^4.17.15"
     markdown-it "^10.0.0"
+    nodemon "^2.0.2"
     winston "^3.2.1"
 
 argparse@^1.0.7:
@@ -1252,11 +1253,11 @@ google-auth-library@^5.0.0, google-auth-library@^5.2.2, google-auth-library@^5.5
     lru-cache "^5.0.0"
 
 google-gax@^1.11.0, google-gax@^1.12.0:
-  version "1.14.2"
-  resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-1.14.2.tgz#ce4f9a42c1bc2ca4a4ed8e8cc70c6f7a3548b790"
-  integrity sha512-Nde+FdqALbV3QgMA4KlkxOHfrj9busnZ3EECwy/1gDJm9vhKGwDLWzErqRU5g80OoGSAMgyY7DWIfqz7ina4Jw==
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-1.15.0.tgz#0afa879e1a6909eb7be393249c00fe6f42e9f024"
+  integrity sha512-zNtna/JBZcR7QfUMN8vTa2+vQAgmaZDkQRyOp/hGksLDjS2aRmlgP6aMdqnlKIIQ9jRBopYOLazT3++jxBw/xw==
   dependencies:
-    "@grpc/grpc-js" "^0.6.18"
+    "@grpc/grpc-js" "^0.7.0"
     "@grpc/proto-loader" "^0.5.1"
     "@types/fs-extra" "^8.0.1"
     "@types/long" "^4.0.0"
@@ -1267,7 +1268,7 @@ google-gax@^1.11.0, google-gax@^1.12.0:
     lodash.at "^4.6.0"
     lodash.has "^4.5.2"
     node-fetch "^2.6.0"
-    protobufjs "^6.8.8"
+    protobufjs "^6.8.9"
     retry-request "^4.0.0"
     semver "^6.0.0"
     walkdir "^0.4.0"
@@ -1865,7 +1866,7 @@ node-forge@^0.9.0:
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.9.1.tgz#775368e6846558ab6676858a4d8c6e8d16c677b5"
   integrity sha512-G6RlQt5Sb4GMBzXvhfkeFmbqR6MzhtnT7VTHuLadjkii3rdYHNdw0m8zA4BTxVIh68FicCQ2NSUANpsqkr9jvQ==
 
-nodemon@^2.0.1:
+nodemon@^2.0.1, nodemon@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.2.tgz#9c7efeaaf9b8259295a97e5d4585ba8f0cbe50b0"
   integrity sha512-GWhYPMfde2+M0FsHnggIHXTqPDHXia32HRhh6H0d75Mt9FKUoCBvumNHr7LdrpPBTKxsWmIEOjoN+P4IU6Hcaw==
@@ -2025,7 +2026,7 @@ progress@^2.0.0:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-protobufjs@^6.8.6, protobufjs@^6.8.8:
+protobufjs@^6.8.6, protobufjs@^6.8.9:
   version "6.8.9"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.8.9.tgz#0b1adbcdaa983d369c3d9108a97c814edc030754"
   integrity sha512-j2JlRdUeL/f4Z6x4aU4gj9I2LECglC+5qR2TrWb193Tla1qfdaNQTZ8I27Pt7K0Ajmvjjpft7O3KWTGciz4gpw==
