@@ -6,7 +6,7 @@
   "dependencies": {
     "@google-cloud/logging": "^7.3.0",
     "@google-cloud/secret-manager": "^2.1.0",
-    "@hapi/joi": "^17.1.0",
+    "@hapi/joi": "~16.1.8",
     "body-parser": "^1.19.0",
     "btoa-lite": "^1.0.0",
     "cors": "^2.8.5",
