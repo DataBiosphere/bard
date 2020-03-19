@@ -72,9 +72,20 @@ const main = async () => {
     timestamp: Joi.date().timestamp().required()
   }).required().unknown(true)
 
+  const trackEvent = async req => {
+    const { event, properties } = req.body
+
+    validateInput(req.body, Joi.object({ event: eventSchema, properties: propertiesSchema }))
+
+    log(req.body)
+    token && sendToMixpanel(token, event, properties)
+
+    return new Response(200)
+  }
+
   /**
-   * @api {post} /event Log a user event
-   * @apiDescription Records the event to a log and forwards it to mixpanel
+   * @api {post} /api/event Log a user event
+   * @apiDescription Records the event for a registered user to a log and forwards it to mixpanel
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
@@ -86,16 +97,23 @@ const main = async () => {
    * @apiParam {Date} properties.timestamp Timestamp of the event
    * @apiSuccess (Success 200) -
    */
-  app.post('/api/event', promiseHandler(withAuth(async req => {
-    const { event, properties } = req.body
+  app.post('/api/event', promiseHandler(withAuth(trackEvent)))
 
-    validateInput(req.body, Joi.object({ event: eventSchema, properties: propertiesSchema }))
-
-    log(req.body)
-    token && sendToMixpanel(token, event, properties)
-
-    return new Response(200)
-  })))
+  /**
+   * @api {post} /api/event/unregistered Log a user event
+   * @apiDescription Records the event for an unregistered user to a log and forwards it to mixpanel
+   * @apiName event
+   * @apiVersion 1.0.0
+   * @apiGroup Events
+   * @apiParam {String} event Name of the event
+   * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be used
+   * @apiParam {String} properties.userId The anonymized ID of the user
+   * @apiParam {String} properties.appId The application
+   * @apiParam {String} properties.appPath The navigational path in the application the user is on, with identifying parameters removed
+   * @apiParam {Date} properties.timestamp Timestamp of the event
+   * @apiSuccess (Success 200) -
+   */
+  app.post('/api/event/unregistered', promiseHandler(trackEvent))
 }
 
 main().catch(console.error)
