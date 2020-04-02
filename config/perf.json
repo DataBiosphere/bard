@@ -1,4 +1,5 @@
 {
   "project": "terra-bard-perf",
+  "orchestrationRoot": "https://firecloud-orchestration.dsde-perf.broadinstitute.org",
   "samRoot": "https://sam.dsde-perf.broadinstitute.org"
 }

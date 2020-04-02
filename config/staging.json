@@ -1,4 +1,5 @@
 {
   "project": "terra-bard-staging",
+  "orchestrationRoot": "https://firecloud-orchestration.dsde-staging.broadinstitute.org",
   "samRoot": "https://sam.dsde-staging.broadinstitute.org"
 }
