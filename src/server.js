@@ -95,8 +95,7 @@ const main = async () => {
     const data = _.update('properties', properties => ({
       ...properties,
       token,
-      'distinct_id': `google:${req.user.userSubjectId}`,
-      ip: req.ip
+      'distinct_id': `google:${req.user.userSubjectId}`
     }), req.body)
     await Promise.all([
       log(data),
@@ -123,7 +122,6 @@ const main = async () => {
     const data = {
       '$token': token,
       '$distinct_id': `google:${userId}`,
-      '$ip': req.ip,
       '$set': { '$email': email }
     }
     if (token) {
