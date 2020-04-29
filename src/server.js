@@ -9,6 +9,8 @@ const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('@hapi/joi')
 
+const uuidRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i //TODO verify works right
+
 const fetchOk = async (url, { serviceName, ...options } = {}) => {
   const res = await fetch(url, options).catch(() => {
     throw new Response(503, `Unable to contact ${serviceName} service`)
@@ -35,21 +37,41 @@ const fetchMixpanel = async (url, { data, ...options } = {}) => {
   }
 }
 
-const withAuth = wrappedFn => async (req, ...args) => {
+const verifyAuth = async req => {
   const res = await fetchOk(
     `${samRoot}/register/user/v2/self/info`,
-    { headers: { authorization: req.headers.authorization }, serviceName: 'auth' }
+    {
+      headers: { authorization: req.headers.authorization },
+      serviceName: 'auth'
+    }
   )
   req.user = await res.json()
   if (!req.user.enabled) {
     throw new Response(403, 'Forbidden')
   }
+}
+
+const withAuth = wrappedFn => async (req, ...args) => {
+  verifyAuth(req)
+  return wrappedFn(req, ...args)
+}
+
+const withOptionalAuth = wrappedFn => async (req, ...args) => {
+  if (req.headers.authorization) {
+    verifyAuth(req)
+  }
   return wrappedFn(req, ...args)
 }
 
 const main = async () => {
-  const token = await getSecret({ project, secretName: 'mixpanel-api' })
-  const log = logger({ project, logName: 'metrics' })
+  const token = await getSecret({
+    project,
+    secretName: 'mixpanel-api'
+  })
+  const log = logger({
+    project,
+    logName: 'metrics'
+  })
 
   const app = express()
   app.use(bodyParser.json())
@@ -72,7 +94,10 @@ const main = async () => {
   const eventSchema = Joi.string().pattern(/^\$/, { invert: true }).required()
   const propertiesSchema = Joi.object({
     token: Joi.any().forbidden(),
-    'distinct_id': Joi.any().forbidden(),
+    'distinct_id': Joi.string().alter({
+      unauthenticated: schema => schema.pattern(uuidRegex).required(),
+      authenticated: schema => schema.forbidden()
+    }),
     time: Joi.any().forbidden(),
     ip: Joi.any().forbidden(),
     name: Joi.any().forbidden(),
@@ -90,12 +115,15 @@ const main = async () => {
    * @apiParam {String} properties.appId The application
    * @apiSuccess (Success 200) -
    */
-  app.post('/api/event', promiseHandler(withAuth(async req => {
-    validateInput(req.body, Joi.object({ event: eventSchema, properties: propertiesSchema }))
+  app.post('/api/event', promiseHandler(withOptionalAuth(async req => {
+    validateInput(req.body, Joi.object({
+      event: eventSchema,
+      properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
+    }))
     const data = _.update('properties', properties => ({
       ...properties,
       token,
-      'distinct_id': `google:${req.user.userSubjectId}`
+      'distinct_id': req.user ? `google:${req.user.userSubjectId}` : properties.distinct_id
     }), req.body)
     await Promise.all([
       log(data),
@@ -115,7 +143,10 @@ const main = async () => {
   app.post('/api/syncProfile', promiseHandler(async req => {
     const res = await fetchOk(
       `${orchestrationRoot}/register/profile`,
-      { headers: { authorization: req.headers.authorization }, serviceName: 'profile' }
+      {
+        headers: { authorization: req.headers.authorization },
+        serviceName: 'profile'
+      }
     )
     const { userId, keyValuePairs } = await res.json()
     const email = _.get('value', _.find({ key: 'anonymousGroup' }, keyValuePairs))
