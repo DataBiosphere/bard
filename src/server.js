@@ -9,7 +9,9 @@ const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('@hapi/joi')
 
-const uuidRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i //TODO verify works right
+const userDistinctId = user => {
+  return `google:${user.userSubjectId}`
+}
 
 const fetchOk = async (url, { serviceName, ...options } = {}) => {
   const res = await fetch(url, options).catch(() => {
@@ -26,14 +28,16 @@ const fetchOk = async (url, { serviceName, ...options } = {}) => {
 }
 
 const fetchMixpanel = async (url, { data, ...options } = {}) => {
+  console.log('data:', data)
   const res = await fetchOk(
     `https://api.mixpanel.com/${url}?data=${btoa(JSON.stringify(data))}`,
     { serviceName: 'metrics', ...options }
   )
   const status = await res.text()
+  console.log('status:', status)
   if (status !== '1') {
     console.error(`Failed to log to mixpanel:`, data)
-    throw new Response(400, 'Error saving metrics data')
+    throw new Response(400, 'Error saving metrics data:', status) //error message todo
   }
 }
 
@@ -52,13 +56,16 @@ const verifyAuth = async req => {
 }
 
 const withAuth = wrappedFn => async (req, ...args) => {
-  verifyAuth(req)
+  await verifyAuth(req)
   return wrappedFn(req, ...args)
 }
 
 const withOptionalAuth = wrappedFn => async (req, ...args) => {
+  console.log('body:', req.body)
+  console.log('user:', req.user)
   if (req.headers.authorization) {
-    verifyAuth(req)
+    console.log('in if')
+    await verifyAuth(req)
   }
   return wrappedFn(req, ...args)
 }
@@ -95,7 +102,9 @@ const main = async () => {
   const propertiesSchema = Joi.object({
     token: Joi.any().forbidden(),
     'distinct_id': Joi.string().alter({
-      unauthenticated: schema => schema.pattern(uuidRegex).required(),
+      unauthenticated: schema => schema.guid({
+        version: 'uuidv4'
+      }).required(),
       authenticated: schema => schema.forbidden()
     }),
     time: Joi.any().forbidden(),
@@ -103,6 +112,17 @@ const main = async () => {
     name: Joi.any().forbidden(),
     appId: Joi.string().required()
   }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
+  /*
+   * const indentifySchema = Joi.object({
+   *   $anon_id: Joi.string().guid({
+   *     version: 'uuidv4'
+   *   }).required(),
+   *   token: Joi.any().forbidden(),
+   *   time: Joi.any().forbidden(),
+   *   ip: Joi.any().forbidden(),
+   *   name: Joi.any().forbidden()
+   * }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
+   */
 
   /**
    * @api {post} /api/event Log a user event
@@ -116,6 +136,8 @@ const main = async () => {
    * @apiSuccess (Success 200) -
    */
   app.post('/api/event', promiseHandler(withOptionalAuth(async req => {
+    console.log('body:', req.body)
+    console.log('user:', req.user)
     validateInput(req.body, Joi.object({
       event: eventSchema,
       properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
@@ -123,10 +145,39 @@ const main = async () => {
     const data = _.update('properties', properties => ({
       ...properties,
       token,
-      'distinct_id': req.user ? `google:${req.user.userSubjectId}` : properties.distinct_id
+      'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
     await Promise.all([
       log(data),
+      token && fetchMixpanel('track', { data })
+    ])
+    return new Response(200)
+  })))
+
+  /**
+   * @api {post} /api/identify Log a user event
+   * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids
+   * @apiName event
+   * @apiVersion 1.0.0
+   * @apiGroup Events
+   * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be used
+   * @apiSuccess (Success 200) -
+   */
+  app.post('/api/merge', promiseHandler(withAuth(async req => {
+    /*
+     * validateInput(req.body, Joi.object({
+     *   properties: indentifySchema
+     * }))
+     */
+    const data = {
+      event: '$identify',
+      properties: {
+        '$identified_id': userDistinctId(req.user),
+        '$anon_id': req.body.anon_id,
+        token
+      }
+    }
+    await Promise.all([
       token && fetchMixpanel('track', { data })
     ])
     return new Response(200)
