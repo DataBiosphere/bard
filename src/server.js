@@ -112,17 +112,12 @@ const main = async () => {
     name: Joi.any().forbidden(),
     appId: Joi.string().required()
   }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
-  /*
-   * const indentifySchema = Joi.object({
-   *   $anon_id: Joi.string().guid({
-   *     version: 'uuidv4'
-   *   }).required(),
-   *   token: Joi.any().forbidden(),
-   *   time: Joi.any().forbidden(),
-   *   ip: Joi.any().forbidden(),
-   *   name: Joi.any().forbidden()
-   * }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
-   */
+
+  const identifySchema = Joi.object({
+    anon_id: Joi.string().guid({
+      version: 'uuidv4'
+    }).required()
+  })
 
   /**
    * @api {post} /api/event Log a user event
@@ -136,8 +131,6 @@ const main = async () => {
    * @apiSuccess (Success 200) -
    */
   app.post('/api/event', promiseHandler(withOptionalAuth(async req => {
-    console.log('body:', req.body)
-    console.log('user:', req.user)
     validateInput(req.body, Joi.object({
       event: eventSchema,
       properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
@@ -155,7 +148,7 @@ const main = async () => {
   })))
 
   /**
-   * @api {post} /api/identify Log a user event
+   * @api {post} /api/identify Merge two user id's
    * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids
    * @apiName event
    * @apiVersion 1.0.0
@@ -163,12 +156,11 @@ const main = async () => {
    * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be used
    * @apiSuccess (Success 200) -
    */
-  app.post('/api/merge', promiseHandler(withAuth(async req => {
-    /*
-     * validateInput(req.body, Joi.object({
-     *   properties: indentifySchema
-     * }))
-     */
+  app.post('/api/identify', promiseHandler(withAuth(async req => {
+    validateInput(req.body, Joi.object({
+      anon_id: identifySchema
+    }))
+
     const data = {
       event: '$identify',
       properties: {
