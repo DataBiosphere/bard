@@ -35,7 +35,7 @@ const fetchMixpanel = async (url, { data, ...options } = {}) => {
   const status = await res.text()
   if (status !== '1') {
     console.error(`Failed to log to mixpanel:`, data)
-    throw new Response(400, 'Error saving metrics data:', status)
+    throw new Response(400, 'Error saving metrics data')
   }
 }
 
@@ -66,14 +66,8 @@ const withOptionalAuth = wrappedFn => async (req, ...args) => {
 }
 
 const main = async () => {
-  const token = await getSecret({
-    project,
-    secretName: 'mixpanel-api'
-  })
-  const log = logger({
-    project,
-    logName: 'metrics'
-  })
+  const token = await getSecret({ project, secretName: 'mixpanel-api' })
+  const log = logger({ project, logName: 'metrics' })
 
   const app = express()
   app.use(bodyParser.json())
@@ -97,9 +91,7 @@ const main = async () => {
   const propertiesSchema = Joi.object({
     token: Joi.any().forbidden(),
     'distinct_id': Joi.string().alter({
-      unauthenticated: schema => schema.guid({
-        version: 'uuidv4'
-      }).required(),
+      unauthenticated: schema => schema.guid({ version: 'uuidv4' }).required(),
       authenticated: schema => schema.forbidden()
     }),
     time: Joi.any().forbidden(),
@@ -109,7 +101,6 @@ const main = async () => {
   }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
 
   const identifySchema = Joi.string().guid({ version: 'uuidv4' }).required()
-
 
   /**
    * @api {post} /api/event Log a user event
@@ -178,10 +169,7 @@ const main = async () => {
   app.post('/api/syncProfile', promiseHandler(async req => {
     const res = await fetchOk(
       `${orchestrationRoot}/register/profile`,
-      {
-        headers: { authorization: req.headers.authorization },
-        serviceName: 'profile'
-      }
+      { headers: { authorization: req.headers.authorization }, serviceName: 'profile' }
     )
     const { userId, keyValuePairs } = await res.json()
     const email = _.get('value', _.find({ key: 'anonymousGroup' }, keyValuePairs))
