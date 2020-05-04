@@ -42,10 +42,7 @@ const fetchMixpanel = async (url, { data, ...options } = {}) => {
 const verifyAuth = async req => {
   const res = await fetchOk(
     `${samRoot}/register/user/v2/self/info`,
-    {
-      headers: { authorization: req.headers.authorization },
-      serviceName: 'auth'
-    }
+    { headers: { authorization: req.headers.authorization }, serviceName: 'auth' }
   )
   req.user = await res.json()
   if (!req.user.enabled) {
@@ -140,9 +137,7 @@ const main = async () => {
    * @apiSuccess (Success 200) -
    */
   app.post('/api/identify', promiseHandler(withAuth(async req => {
-    validateInput(req.body, Joi.object({
-      anonId: identifySchema
-    }))
+    validateInput(req.body, Joi.object({ anonId: identifySchema }))
 
     const data = {
       event: '$identify',
