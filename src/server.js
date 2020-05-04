@@ -28,16 +28,14 @@ const fetchOk = async (url, { serviceName, ...options } = {}) => {
 }
 
 const fetchMixpanel = async (url, { data, ...options } = {}) => {
-  console.log('data:', data)
   const res = await fetchOk(
     `https://api.mixpanel.com/${url}?data=${btoa(JSON.stringify(data))}`,
     { serviceName: 'metrics', ...options }
   )
   const status = await res.text()
-  console.log('status:', status)
   if (status !== '1') {
     console.error(`Failed to log to mixpanel:`, data)
-    throw new Response(400, 'Error saving metrics data:', status) //error message todo
+    throw new Response(400, 'Error saving metrics data:', status)
   }
 }
 
@@ -61,10 +59,7 @@ const withAuth = wrappedFn => async (req, ...args) => {
 }
 
 const withOptionalAuth = wrappedFn => async (req, ...args) => {
-  console.log('body:', req.body)
-  console.log('user:', req.user)
   if (req.headers.authorization) {
-    console.log('in if')
     await verifyAuth(req)
   }
   return wrappedFn(req, ...args)
@@ -113,11 +108,8 @@ const main = async () => {
     appId: Joi.string().required()
   }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
 
-  const identifySchema = Joi.object({
-    anon_id: Joi.string().guid({
-      version: 'uuidv4'
-    }).required()
-  })
+  const identifySchema = Joi.string().guid({ version: 'uuidv4' }).required()
+
 
   /**
    * @api {post} /api/event Log a user event
@@ -158,14 +150,14 @@ const main = async () => {
    */
   app.post('/api/identify', promiseHandler(withAuth(async req => {
     validateInput(req.body, Joi.object({
-      anon_id: identifySchema
+      anonId: identifySchema
     }))
 
     const data = {
       event: '$identify',
       properties: {
         '$identified_id': userDistinctId(req.user),
-        '$anon_id': req.body.anon_id,
+        '$anon_id': req.body.anonId,
         token
       }
     }
