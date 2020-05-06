@@ -130,10 +130,10 @@ const main = async () => {
   /**
    * @api {post} /api/identify Merge two user id's
    * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids
-   * @apiName event
+   * @apiName identify
    * @apiVersion 1.0.0
    * @apiGroup Events
-   * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be used
+   * @apiParam {String} The distinct id of an anonymous user, this is required
    * @apiSuccess (Success 200) -
    */
   app.post('/api/identify', promiseHandler(withAuth(async req => {
@@ -148,6 +148,7 @@ const main = async () => {
       }
     }
     await Promise.all([
+      log(data),
       token && fetchMixpanel('track', { data })
     ])
     return new Response(200)
