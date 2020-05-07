@@ -106,9 +106,8 @@ const main = async () => {
    * @apiVersion 1.0.0
    * @apiGroup Events
    * @apiParam {String} event Name of the event
-   * @apiParam {Object} properties Properties associated with this event. If the user is registered, the distinct_id property will
-   * be auto-populated and is forbidden to be passed by the client, if the user is anonymous a distinct_id in uuid4 format passed
-   * by the client is required. Additional application defined fields can also be used.
+   * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
+   * @apiParam (Unregistered) {String{uuid4}} properties.distinct_id The id of the anon user required for client to pass if user is unregistered (forbidden if user is registered)
    * @apiParam {String} properties.appId The application
    * @apiSuccess (Success 200) -
    */
