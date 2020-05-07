@@ -9,6 +9,10 @@ const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('@hapi/joi')
 
+const userDistinctId = user => {
+  return `google:${user.userSubjectId}`
+}
+
 const fetchOk = async (url, { serviceName, ...options } = {}) => {
   const res = await fetch(url, options).catch(() => {
     throw new Response(503, `Unable to contact ${serviceName} service`)
@@ -35,7 +39,7 @@ const fetchMixpanel = async (url, { data, ...options } = {}) => {
   }
 }
 
-const withAuth = wrappedFn => async (req, ...args) => {
+const verifyAuth = async req => {
   const res = await fetchOk(
     `${samRoot}/register/user/v2/self/info`,
     { headers: { authorization: req.headers.authorization }, serviceName: 'auth' }
@@ -43,6 +47,17 @@ const withAuth = wrappedFn => async (req, ...args) => {
   req.user = await res.json()
   if (!req.user.enabled) {
     throw new Response(403, 'Forbidden')
+  }
+}
+
+const withAuth = wrappedFn => async (req, ...args) => {
+  await verifyAuth(req)
+  return wrappedFn(req, ...args)
+}
+
+const withOptionalAuth = wrappedFn => async (req, ...args) => {
+  if (req.headers.authorization) {
+    await verifyAuth(req)
   }
   return wrappedFn(req, ...args)
 }
@@ -72,12 +87,17 @@ const main = async () => {
   const eventSchema = Joi.string().pattern(/^\$/, { invert: true }).required()
   const propertiesSchema = Joi.object({
     token: Joi.any().forbidden(),
-    'distinct_id': Joi.any().forbidden(),
+    'distinct_id': Joi.string().alter({
+      unauthenticated: schema => schema.guid({ version: 'uuidv4' }).required(),
+      authenticated: schema => schema.forbidden()
+    }),
     time: Joi.any().forbidden(),
     ip: Joi.any().forbidden(),
     name: Joi.any().forbidden(),
     appId: Joi.string().required()
   }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
+
+  const identifySchema = Joi.string().guid({ version: 'uuidv4' }).required()
 
   /**
    * @api {post} /api/event Log a user event
@@ -86,17 +106,48 @@ const main = async () => {
    * @apiVersion 1.0.0
    * @apiGroup Events
    * @apiParam {String} event Name of the event
-   * @apiParam {Object} properties Properties associated with this event. The below fields are required. Additional application defined fields can also be used
+   * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
+   * @apiParam (Unregistered) {String{uuid4}} properties.distinct_id The id of the anon user required for client to pass if user is unregistered (forbidden if user is registered)
    * @apiParam {String} properties.appId The application
    * @apiSuccess (Success 200) -
    */
-  app.post('/api/event', promiseHandler(withAuth(async req => {
-    validateInput(req.body, Joi.object({ event: eventSchema, properties: propertiesSchema }))
+  app.post('/api/event', promiseHandler(withOptionalAuth(async req => {
+    validateInput(req.body, Joi.object({
+      event: eventSchema,
+      properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
+    }))
     const data = _.update('properties', properties => ({
       ...properties,
       token,
-      'distinct_id': `google:${req.user.userSubjectId}`
+      'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
+    await Promise.all([
+      log(data),
+      token && fetchMixpanel('track', { data })
+    ])
+    return new Response(200)
+  })))
+
+  /**
+   * @api {post} /api/identify Merge two user id's
+   * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids
+   * @apiName identify
+   * @apiVersion 1.0.0
+   * @apiGroup Events
+   * @apiParam {String} The distinct id of an anonymous user, this is required
+   * @apiSuccess (Success 200) -
+   */
+  app.post('/api/identify', promiseHandler(withAuth(async req => {
+    validateInput(req.body, Joi.object({ anonId: identifySchema }))
+
+    const data = {
+      event: '$identify',
+      properties: {
+        '$identified_id': userDistinctId(req.user),
+        '$anon_id': req.body.anonId,
+        token
+      }
+    }
     await Promise.all([
       log(data),
       token && fetchMixpanel('track', { data })
