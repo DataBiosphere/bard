@@ -82,23 +82,23 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: dev
       - deploy-alpha:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: dev
       - deploy-staging:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: dev
       - deploy-perf:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: dev
                          
