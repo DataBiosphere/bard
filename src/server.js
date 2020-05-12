@@ -134,7 +134,7 @@ const main = async () => {
    * @apiName identify
    * @apiVersion 1.0.0
    * @apiGroup Events
-   * @apiParam {String} The distinct id of an anonymous user, this is required
+   * @apiParam {String} anonId The distinct id of an anonymous user, this is required
    * @apiSuccess (Success 200) -
    */
   app.post('/api/identify', promiseHandler(withAuth(async req => {
