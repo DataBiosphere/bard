@@ -157,7 +157,7 @@ const main = async () => {
 
   /**
    * @api {post} /api/syncProfile Update mixpanel profile
-   * @apiDescription Syncs profile info from orchestration to mixpanel. Requires an authorization token to be set pull the profile from Orchestration.
+   * @apiDescription Syncs profile info from orchestration to mixpanel. Requires an authorization token, which pulls the corresponding profile from Orchestration to sync into mixpanel
    * @apiName syncProfile
    * @apiVersion 1.0.0
    * @apiGroup Profile
