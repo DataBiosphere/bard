@@ -101,7 +101,7 @@ const main = async () => {
 
   /**
    * @api {post} /api/event Log a user event
-   * @apiDescription Records the event to a log and forwards it to mixpanel
+   * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
@@ -130,7 +130,7 @@ const main = async () => {
 
   /**
    * @api {post} /api/identify Merge two user id's
-   * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids
+   * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids. Requires an authorization token that is verified with Sam
    * @apiName identify
    * @apiVersion 1.0.0
    * @apiGroup Events
@@ -157,7 +157,7 @@ const main = async () => {
 
   /**
    * @api {post} /api/syncProfile Update mixpanel profile
-   * @apiDescription Syncs profile info from orchestration to mixpanel
+   * @apiDescription Syncs profile info from orchestration to mixpanel. Requires an authorization token to be set pull the profile from Orchestration.
    * @apiName syncProfile
    * @apiVersion 1.0.0
    * @apiGroup Profile
