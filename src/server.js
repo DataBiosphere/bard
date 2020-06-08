@@ -130,7 +130,7 @@ const main = async () => {
 
   /**
    * @api {post} /api/identify Merge two user id's
-   * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids. Requires an authorization token that is verified with Sam
+   * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids. This merges the client generated id, used for anonymous, non-authenticated metrics with the Bard auto-generated `$distinct_id` to link an anonymous session with a user. Requires an authorization token that is verified with Sam
    * @apiName identify
    * @apiVersion 1.0.0
    * @apiGroup Events
