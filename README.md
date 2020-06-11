@@ -1,11 +1,11 @@
 # Bard 
 Metrics Collection Service
 
-## Overview
-Bard is a service that accepts requests from a client application for the purpose of capturing, logging, and working with user events, forwarding relevant data to Mixpanel, a user analytics third party system. Mixpanel is then used to learn about the behavior of the users utilizing our applications so we can better suit their needs. Below are API endpoints you can integrate into your code to utilize this service in your own application. 
-
 (Why is the service called Bard? It’s a metric system → metric system uses meters → poets use meters → bards are poets → bards tell stories (kind of what we are doing))
 
+
+## Overview
+Bard is a service that accepts requests from a client application for the purpose of capturing, logging, and working with user events, forwarding relevant data to Mixpanel, a user analytics third party system. Mixpanel is then used to learn about the behavior of the users utilizing our applications so we can better suit their needs. Below are API endpoints you can integrate into your code to utilize this service in your own application. 
 
 ## Typical Usage
 #### Example use case 1: 
@@ -47,45 +47,42 @@ This version of the endpoint does not require an authorization header. This is f
 
 Example: 
 		
-    Request URL: https://terra-bard-dev.appspot.com/api/event
-    Request Method: POST
-    Request Payload: 
-                { 'event name', 
-                    properties: { hostname: 'url name', distinct_id: 'A UUID4 string'}
-                }
+		My website lets users who are not signed in view job applications. I want to know how many
+		people are looking at my job applications. Tracking unregistered users allows me to see the
+		full picture for my features that are accessible to unsigned in users.
 
 ###Registered User Event Endpoint:
 This version of the endpoint does require an authorization header. This is for use with users that are registered and currently signed into the application. This endpoint will verify user identification with Sam and forward the event data for these users to Mixpanel anonymizing the user identifiction before passing along to Mixpanel. Please note for a registered user you CANNOT send a user id, this must be sent implicitly by the user being signed in. This is to prevent fradulent user id's from being passed.
 
 Example:
+        
+        My website has lots of functionality only available to logged in users. I want to be able to 
+        see what my logged in users are doing and I want to be confident that I am seeing data only 
+        for people signed into my site. Using this endpoint I can find out that information.
 
-    Request URL: https://terra-bard-dev.appspot.com/api/event
-    Request Method: POST
-    authorization: Bearer token
-    Request Payload: 
-                { 'event name', 
-                    properties: { hostname: 'url name'}
-                }
 
 ##Working with the identify endpoint:
 This endpoint requires an authorization header. It also requires the user to be signed in. Once a user is signed in you can utilize this endpoint by sending the UUID4 that was the distinct id for the anonymous user that you want to be associated with this signed in user. This endpoint will then pass along the needed data to Mixpanel so that the correlation between the user as an unregistered user and a signed-in one will be made.
 
 Example:
+        There is a feature on my application for a user to send in a question to the support team.
+        Users do not need to be signed in to use this feature. 
         
-        Request URL: https://terra-bard-dev.appspot.com/api/identify
-        Request Method: POST
-        authorization: Bearer token
-        Request Payload: 
-                        { Event_Name, 
-                            { anonId: 'A UUID4 string'}
-                        }
+        User A comes to my application and has a question so they reach out to the support team. 
+        They then decide they want to register for the application while waiting for the response. 
+        So the register and log-in. Once inside the application User A realizes the answer to their 
+        question by trying out the application. Support gets back to them and User A responds that
+        they figured out the answer by playing around on the site. Now if the application used the
+        identify endpoint on registration the support team can use Mixpanel to find out what the
+        user did to answer thier own question which might help support create helpful documents for
+        new users in the future.
+       
 
 ##Working with the Sync Profile endpoint:
 This endpoint does require an authorization header. 
 
 Example:
 
-    oihuj
    
 ## Documentation
   To generate the [API docs](https://terra-metrics-dev.appspot.com/docs) run
