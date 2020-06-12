@@ -79,12 +79,15 @@ Example:
        
 
 ##Working with the Sync Profile endpoint:
-This endpoint does require an authorization header. 
+This endpoint does require an authorization header and is used to sync up the anonymized user info in Mixpanel with the user info in Orchestration.
 Since the syncProfile call is idempotent, it's acceptable to call repeatedly (e.g. on every login from the front end) in order to simplify the process of creating profiles for existing users.
 
 
 Example:
-
+       
+       Everytime any user signs in to my application I call the Sync Profile endpoint so that the user info
+       that is recorded through Orchestration will be correlated with the user info that is sent
+       to Mixpanel.
    
 ## Documentation
   To generate the [API docs](https://terra-metrics-dev.appspot.com/docs) run
