@@ -37,12 +37,12 @@ Note that there is currently no separate development environment for mixpanel, s
     yarn run lint
     ```
    
-##Working with the track user event endpoint:
-####Notes:
+## Working with the track user event endpoint:
+#### Notes:
 - This endpoint optionally requires an authorization header, see below for each use case.
 - When adding your own events please be sure to update the Lexicon in Mixpanel with the meaning of your events and property names. (E.x. Terra-UI added an event called `Workspace:Share` with a property called `numAdditions`. Updating the Lexicon on Mixpanel gives a description of each of these letting folks know that a `Workspace:Share` event occurs when a workspace is shared with at least one new person and that the `numAdditions` is the count of the users that the workspace was shared with.)
 
-###Unregistered User Event Endpoint:
+### Unregistered User Event Endpoint:
 This version of the endpoint does not require an authorization header. This is for use with users that are not signed into the application or have never registered and are considered anonymous users. This endpoint will then forward the event data for these users to Mixpanel identifying the user by a unique UUID4 id that your client application must provide to Bard.
 
 Example: 
@@ -51,7 +51,7 @@ Example:
 		people are looking at my job applications. Tracking unregistered users allows me to see the
 		full picture for my features that are accessible to unsigned in users.
 
-###Registered User Event Endpoint:
+### Registered User Event Endpoint:
 This version of the endpoint does require an authorization header. This is for use with users that are registered and currently signed into the application. This endpoint will verify user identification with Sam and forward the event data for these users to Mixpanel anonymizing the user identification before passing along to Mixpanel. Please note for a registered user you CANNOT send a user id, this must be sent implicitly by the user being signed in. This is to prevent fraudulent user ids from being passed.
 
 Example:
@@ -61,7 +61,7 @@ Example:
         for people signed into my site. Using this endpoint I can find out that information.
 
 
-##Working with the identify endpoint:
+## Working with the identify endpoint:
 This endpoint requires an authorization header. It also requires the user to be signed in. Once a user is signed in you can utilize this endpoint by sending the UUID4 that was the distinct id for the anonymous user that you want to be associated with this signed in user. Bard will then pass along the needed data to Mixpanel so that the correlation between the user as an unregistered user and a signed-in one will be made.
 
 Example:
@@ -78,7 +78,7 @@ Example:
         new users in the future.
        
 
-##Working with the Sync Profile endpoint:
+## Working with the Sync Profile endpoint:
 This endpoint does require an authorization header and is used to sync up the anonymized user info in Mixpanel with the user info in Orchestration.
 Since the syncProfile call is idempotent, it's acceptable to call repeatedly (e.g. on every login from the front end) in order to simplify the process of creating profiles for existing users.
 
