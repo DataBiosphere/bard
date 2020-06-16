@@ -26,7 +26,7 @@ Note that there is currently no separate development environment for mixpanel, s
     yarn install
     ```
 3. To run bard locally you need to create a config.json in the root directory as there is no specified default config.
-   From within your local bard repo run the following command in the terminal:
+   To do so, run the following command in the terminal from within your local bard repo. (This will copy the dev config to a root version of config.json):
    
    ```sh
    cp config/dev.json config.json
