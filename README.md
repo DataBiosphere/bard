@@ -25,14 +25,19 @@ Note that there is currently no separate development environment for mixpanel, s
     ```sh
     yarn install
     ```
-
-3. Start a dev server on port 8080 with auto-reload
+3. To run bard locally you need to create a config.json in the root directory as there is no specified default config.
+   From within your local bard repo run the following command in the terminal:
+   
+   ```sh
+   cp config/dev.json config.json
+   
+4. Start a dev server on port 8080 with auto-reload
 
     ```sh
     GCP_PROJECT=terra-bard-dev GOOGLE_APPLICATION_CREDENTIALS=<path-to-key-file> yarn run start-dev
     ```
 
-4. Lint any code changes using 
+5. Lint any code changes using 
     ```sh
     yarn run lint
     ```
