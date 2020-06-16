@@ -21,7 +21,7 @@ Note that there is currently no separate development environment for mixpanel, s
 
 1. Download a key for the app engine default service account terra-metrics-dev@appspot.gserviceaccount.com and note the location
 2. Install the dependencies
-   
+
     ```sh
     yarn install
     ```
@@ -30,14 +30,14 @@ Note that there is currently no separate development environment for mixpanel, s
    
    ```sh
    cp config/dev.json config.json
-   
+   ``` 
 4. Start a dev server on port 8080 with auto-reload
 
     ```sh
     GCP_PROJECT=terra-bard-dev GOOGLE_APPLICATION_CREDENTIALS=<path-to-key-file> yarn run start-dev
     ```
-
 5. Lint any code changes using 
+
     ```sh
     yarn run lint
     ```
