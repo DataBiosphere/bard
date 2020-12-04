@@ -4,16 +4,17 @@ const fetch = require('node-fetch')
 
 
 const flagCryptominer = async (message, context) => {
-  const subjectId = Buffer.from(message.data, 'base64').toString();
+  const data = JSON.parse(Buffer.from(message.data, 'base64').toString())
   const token = await getSecret({ project, secretName: 'mixpanel-api' })
-  const data = {
-    $token: token,
-    $distinct_id: `google:${subjectId}`,
-    $set: {
-      'Is Cryptominer': true
+  return fetchMixpanelV2('engage#profile-set', {
+    data: {
+      $token: token,
+      $distinct_id: `google:${data.googleSubjectId}`,
+      $set: {
+        'Is Cryptominer': true
+      }
     }
-  }
-  return fetchMixpanelV2('engage#profile-set', { data })
+  })
 }
 
 // TODO: Share this code with the bard GAE app (will probably require a more sophisticated build/deploy process)
@@ -51,6 +52,10 @@ const fetchOk = async (url, { serviceName, ...options } = {}) => {
   return res
 }
 
+// Note that this is different than fetchMixpanel used in the bard GAE app.
+// This uses a newer version of the Mixpanel API because I was not able to
+// locate any documentation for the old API, which I would have preferred
+// for consistency. -breilly
 const fetchMixpanelV2 = async (url, { data, ...options } = {}) => {
   const body = new URLSearchParams({ data: JSON.stringify(data) })
   const res = await fetchOk(`https://api.mixpanel.com/${url}`,

@@ -8,6 +8,6 @@
     "@google-cloud/functions-framework": "^1.7.1"
   },
   "scripts": {
-    "start": "npx functions-framework --target=markCryptominer --signature-type=event"
+    "start": "npx functions-framework --target=flagCryptominer --signature-type=event"
   }
 }
