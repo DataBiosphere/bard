@@ -1,0 +1,13 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/pubsub": "^2.6.0",
+    "@google-cloud/secret-manager": "^3.2.2"
+  },
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^1.7.1"
+  },
+  "scripts": {
+    "start": "npx functions-framework --target=markCryptominer --signature-type=event"
+  }
+}
