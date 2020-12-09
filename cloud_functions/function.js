@@ -1,24 +1,44 @@
+const _ = require('lodash/fp')
 const { project } = require('./config')
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager')
-const fetch = require('node-fetch')
+const Mixpanel = require('mixpanel')
 
+
+const getMixpanel = _.once(async () => {
+  console.log('Cold start; initializing mixpanel')
+  const token = await getSecret({ project, secretName: 'mixpanel-api' })
+  return Mixpanel.init(token)
+})
 
 const flagCryptominer = async (message, context) => {
-  const data = JSON.parse(Buffer.from(message.data, 'base64').toString())
-  const token = await getSecret({ project, secretName: 'mixpanel-api' })
-  return fetchMixpanelV2('engage#profile-set', {
-    data: {
-      $token: token,
-      $distinct_id: `google:${data.googleSubjectId}`,
-      $set: {
-        'Is Cryptominer': true
-      }
+  try {
+    if (!(message.attributes && message.attributes.cryptominer === true)) {
+      console.error(new Error('Unexpected message; missing `cryptominer: true` attribute. Is the Pub/Sub subscription set up correctly?'))
+      return
     }
-  })
+    const data = message.data && JSON.parse(Buffer.from(message.data, 'base64').toString())
+    if (!(data && data.userSubjectId)) {
+      console.error(new Error('Invalid message: missing userSubjectId'))
+      return
+    }
+
+    // TODO: move this out of the try/catch? What happens if a _.once wrapped function throws an error?
+    const mixpanel = await getMixpanel()
+    mixpanel.people.set(`google:${data.userSubjectId}`, { 'isCryptominer': true }, logMixpanelError)
+
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+    } else {
+      console.error('Unexpected error', new Error(error.toString()))
+    }
+  }
 }
 
-// TODO: Share this code with the bard GAE app (will probably require a more sophisticated build/deploy process)
 
+// Utilities
+
+// TODO: Share this code with the bard GAE app (will probably require a more sophisticated build/deploy process)
 const getSecret = async ({ project, secretName }) =>  {
   const client = new SecretManagerServiceClient()
   const name = `projects/${project}/secrets/${secretName}/versions/latest`
@@ -31,41 +51,14 @@ const getSecret = async ({ project, secretName }) =>  {
   }
 }
 
-class Response {
-  constructor(status, data) {
-    this.status = status
-    this.data = data
+// Log to console.error instead of throwing uncaught exceptions.
+// See https://cloud.google.com/functions/docs/monitoring/error-reporting
+const logMixpanelError = (message, err) => {
+  if (err) {
+    console.error(message, err)
   }
 }
 
-const fetchOk = async (url, { serviceName, ...options } = {}) => {
-  const res = await fetch(url, options).catch(() => {
-    throw new Response(503, `Unable to contact ${serviceName} service`)
-  })
-  if (res.status === 401) {
-    throw new Response(401, 'Unauthorized')
-  }
-  if (!res.ok) {
-    console.error(`${serviceName} error`, await res.text())
-    throw new Response(503, `Failed to query ${serviceName} service`)
-  }
-  return res
-}
-
-// Note that this is different than fetchMixpanel used in the bard GAE app.
-// This uses a newer version of the Mixpanel API because I was not able to
-// locate any documentation for the old API, which I would have preferred
-// for consistency. -breilly
-const fetchMixpanelV2 = async (url, { data, ...options } = {}) => {
-  const body = new URLSearchParams({ data: JSON.stringify(data) })
-  const res = await fetchOk(`https://api.mixpanel.com/${url}`,
-      { serviceName: 'metrics', method: 'POST', body, ...options })
-  const status = await res.text()
-  if (status !== '1') {
-    console.error(`Failed to log to mixpanel:`, status, data)
-    throw new Response(400, 'Error saving metrics data')
-  }
-}
 
 module.exports = {
   flagCryptominer
