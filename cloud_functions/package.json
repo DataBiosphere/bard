@@ -13,6 +13,6 @@
   },
   "scripts": {
     "start": "npx functions-framework --target=flagCryptominer --signature-type=event",
-    "test": "ava"
+    "test": "ava **/test/**/*-tests.js"
   }
 }
