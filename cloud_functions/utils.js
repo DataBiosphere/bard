@@ -11,13 +11,6 @@ const coerceToError = e => {
   }
 }
 
-// Mixpanel SDK callback to log to console.error
-const logMixpanelError = error => {
-  if (error) {
-    console.error(coerceToError(error))
-  }
-}
-
 // TODO: Share this code with the bard GAE app (will probably require a more sophisticated build/deploy process)
 const getSecret = async ({ project, secretName }) =>  {
   const client = new SecretManagerServiceClient()
@@ -34,6 +27,5 @@ const getSecret = async ({ project, secretName }) =>  {
 
 module.exports = {
   coerceToError,
-  getSecret,
-  logMixpanelError
+  getSecret
 }

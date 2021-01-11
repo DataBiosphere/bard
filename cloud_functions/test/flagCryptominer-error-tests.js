@@ -1,7 +1,11 @@
-// These tests cover various error cases for the flagCryptominer cloud function.
+// These tests cover various error cases for the flagCryptominer cloud function. Since everything
+// about this operates in the background, we want to make sure that errors
 // Based on https://cloud.google.com/functions/docs/testing/test-background#unit_tests
 //
-// Since this is a background cloud function, errors are exposed via Cloud Logging Error Reporting.
+// These events are handled asynchronously from the processes emitting the events. Errors can not be
+// reported directly back to callers. Therefore, it is highly valuable to make sure that unexpected
+// conditions will be detected and reported. Errors are exposed via Cloud Logging Error Reporting.
+//
 // Uncaught exceptions will log errors, but will also incur a cold start on future invocations.
 // Instead, we use console.error, so we need to stub that function for these tests.
 // See https://cloud.google.com/functions/docs/monitoring/error-reporting for details.
@@ -9,6 +13,7 @@
 // IMPORTANT: Since we're stubbing a global function (console.error), all of these tests must run
 // in serial, not parallel as is Ava's default.
 // (For future exploration: https://github.com/sinonjs/sinon-test)
+
 const test = require('ava')
 const flagCryptominer = require('../flagCryptominer')
 const sinon = require('sinon')
@@ -25,7 +30,8 @@ test.afterEach.always(t => {
 
 
 // The function should do nothing if the cryptominer attribute isn't set. This could indicate a
-// misconfigured Pub/Sub topic subscription.
+// misconfigured Pub/Sub topic subscription. In this case, the function should do nothing in order
+// to avoid doing the wrong thing.
 test.serial('reject non-cryptominer messages', async t => {
   const mixpanel = utils.makeStubMixpanel()
   const message = {
@@ -76,7 +82,6 @@ test.serial('catch error from Mixpanel', async t => {
 
   await flagCryptominer.run(mixpanel, message)
 
-  t.assert(mixpanel.people.set.calledOnceWith('google:123', { isCryptominer: true }))
   t.assert(console.error.calledOnceWith(sinon.match.instanceOf(Error)))
   t.assert(console.error.calledOnceWith(sinon.match({ message: 'Boom' })),
       `Actual message: ${console.error.firstCall.args[0].toString()}`)

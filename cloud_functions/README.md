@@ -7,7 +7,7 @@ This is a collection of cloud functions that augment the core bard service. The 
 ## Function Documentation
 
 ### `flagCryptominer`
-`flagCryptominer` watches for messages on the `terra-bard-[env]/topics/cryptominers` Pub/Sub topic containing IDs of identified cryptominer accounts and sets the "Is Cryptominer" flag in their Mixpanel profile to `true`.
+`flagCryptominer` watches for messages on the `broad-dsde-[env]/topics/terra-cryptomining` Pub/Sub topic containing IDs of identified cryptominer accounts and sets the "Is Cryptominer" flag in their Mixpanel profile to `true`.
 
 ## Deployment
 ```sh
