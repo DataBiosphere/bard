@@ -1,18 +1,19 @@
-// These tests cover various error cases for the flagCryptominer cloud function. Since everything
-// about this operates in the background, we want to make sure that errors
-// Based on https://cloud.google.com/functions/docs/testing/test-background#unit_tests
+// These tests cover various error cases for the flagCryptominer cloud function. Errors are exposed
+// via Cloud Logging Error Reporting.
+// See https://cloud.google.com/functions/docs/monitoring/error-reporting for details.
 //
 // These events are handled asynchronously from the processes emitting the events. Errors can not be
 // reported directly back to callers. Therefore, it is highly valuable to make sure that unexpected
-// conditions will be detected and reported. Errors are exposed via Cloud Logging Error Reporting.
+// conditions will be detected and reported.
 //
 // Uncaught exceptions will log errors, but will also incur a cold start on future invocations.
 // Instead, we use console.error, so we need to stub that function for these tests.
-// See https://cloud.google.com/functions/docs/monitoring/error-reporting for details.
 //
 // IMPORTANT: Since we're stubbing a global function (console.error), all of these tests must run
 // in serial, not parallel as is Ava's default.
 // (For future exploration: https://github.com/sinonjs/sinon-test)
+//
+// Based on https://cloud.google.com/functions/docs/testing/test-background#unit_tests
 
 const test = require('ava')
 const flagCryptominer = require('../flagCryptominer')
