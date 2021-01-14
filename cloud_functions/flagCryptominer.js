@@ -1,14 +1,11 @@
+const { promisify } = require('util')
 const utils = require('./utils')
 
 
-const run = (mixpanel, message) => {
-  try {
-    const userSubjectId = validate(message)
-    mixpanel.people.set(`google:${userSubjectId}`, { 'isCryptominer': true }, err => { if (err) throw err })
-  } catch (error) {
-    console.error(utils.coerceToError(error))
-  }
-}
+const run = utils.withErrorReporting((mixpanel, message) => {
+  const userSubjectId = validate(message)
+  return promisify(mixpanel.people.set)(`google:${userSubjectId}`, { 'isCryptominer': true })
+})
 
 const validate = message => {
   if (!(message.attributes && message.attributes.cryptominer === true)) {

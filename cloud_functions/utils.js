@@ -1,6 +1,14 @@
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager')
 
 
+const withErrorReporting = fn => async (...args) => {
+  try {
+    return await fn(...args)
+  } catch (error) {
+    console.error(coerceToError(error))
+  }
+}
+
 // Used to make sure console.error() is given an Error in order to invoke Cloud Logging Error Reporting
 // See https://cloud.google.com/functions/docs/monitoring/error-reporting
 const coerceToError = e => {
@@ -28,6 +36,6 @@ const getSecret = async ({ project, secretName }) =>  {
 
 
 module.exports = {
-  coerceToError,
-  getSecret
+  getSecret,
+  withErrorReporting
 }
