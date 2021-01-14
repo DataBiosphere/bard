@@ -53,12 +53,9 @@ jobs:
     executor: node
     steps:
       - checkout
-#      - restore_cache:
-#          key: 1-{{ checksum "cloud_functions/yarn.lock" }}
       - run:
           working_directory: cloud_functions
           command: yarn install --frozen-lockfile
-#      - save_cache
       - run:
           working_directory: cloud_functions
           command: yarn test
