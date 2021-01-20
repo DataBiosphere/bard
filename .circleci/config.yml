@@ -49,34 +49,46 @@ jobs:
           paths:
             - docs
             - node_modules
+  build-cloud-function:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          working_directory: cloud_functions
+          command: yarn install --frozen-lockfile
+      - run:
+          working_directory: cloud_functions
+          command: yarn test
+
   deploy-dev:
     executor: gcloud
-    steps: 
+    steps:
       - deploy-env:
           sa_key_var: "DEV_SA_KEY_JSON"
   deploy-alpha:
     executor: gcloud
-    steps: 
+    steps:
       - deploy-env:
           sa_key_var: "ALPHA_SA_KEY_JSON"
           env: "alpha"
   deploy-staging:
     executor: gcloud
-    steps: 
+    steps:
       - deploy-env:
           sa_key_var: "STAGING_SA_KEY_JSON"
           env: "staging"
   deploy-perf:
     executor: gcloud
-    steps: 
+    steps:
       - deploy-env:
           sa_key_var: "PERF_SA_KEY_JSON"
           env: "perf"
 workflows:
   version: 2
-  build-deploy: 
-    jobs: 
+  build-deploy:
+    jobs:
       - build
+      - build-cloud-function
       - deploy-dev:
           requires:
             - build
@@ -101,4 +113,4 @@ workflows:
           filters:
             branches:
               only: dev
-                         
+
