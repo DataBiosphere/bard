@@ -11,5 +11,5 @@ This is a collection of cloud functions that augment the core bard service. The 
 
 ## Deployment
 ```sh
-gcloud --project terra-bard-[env] functions deploy flagCryptominer --runtime nodejs12 --trigger-topic cryptominers
+gcloud --project terra-bard-[env] functions deploy flagCryptominer --runtime nodejs12 --trigger-http
 ```
