@@ -1,8 +1,10 @@
 const flagCryptominer = require('./flagCryptominer')
 const { getMixpanel } = require('./mixpanel')
+const { promiseHandler, Response } = require('./utils')
 
 
-module.exports.flagCryptominer = async (message, context) => {
+module.exports.flagCryptominer = promiseHandler(async (req, res) => {
   const mixpanel = await getMixpanel()
-  await flagCryptominer.run(mixpanel, message)
-}
+  await flagCryptominer.run(mixpanel, req.body.message)
+  return new Response(200)
+})
