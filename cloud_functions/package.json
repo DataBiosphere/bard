@@ -3,7 +3,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^2.6.0",
     "@google-cloud/secret-manager": "^3.2.2",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mixpanel": "^0.13.0"
   },
   "devDependencies": {
