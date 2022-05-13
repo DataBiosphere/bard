@@ -4,15 +4,15 @@
   "main": "src/server.js",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/logging": "^7.3.0",
-    "@google-cloud/secret-manager": "^2.1.0",
+    "@google-cloud/logging": "^9.8.3",
+    "@google-cloud/secret-manager": "^3.12.0",
     "@hapi/joi": "~16.1.8",
     "body-parser": "^1.19.0",
     "btoa-lite": "^1.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "lodash": "^4.17.15",
-    "node-fetch": "^2.6.0"
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.7"
   },
   "scripts": {
     "generate-docs": "apidoc -i src -o docs",
