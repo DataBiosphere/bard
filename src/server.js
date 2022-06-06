@@ -67,9 +67,10 @@ const withOptionalAuth = wrappedFn => async (req, ...args) => {
 }
 
 /**
- * Temporary wrapper to ignore the 'request:failed' event and delay the repsonse to
+ * Temporary wrapper to ignore the 'request:failed' event and delay the response to
  * slow the browser requests down and reduce the errors, and getting the client out of
  * the degenerative state. This wrapper will prevent calls to sam.
+ * Ticket: https://broadworkbench.atlassian.net/browse/BT-667
  */
 const withBadEventHandling = (log, wrappedFn) => async (req, ...args) => {
   const { event } = req.body
