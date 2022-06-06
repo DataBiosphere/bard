@@ -144,13 +144,11 @@ const main = async () => {
       event: eventSchema,
       properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
     }))
-
     const data = _.update('properties', properties => ({
       ...properties,
       token,
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
-
     await Promise.all([
       log(data),
       token && fetchMixpanel('track', { data })
