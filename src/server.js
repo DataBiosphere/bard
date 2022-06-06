@@ -99,6 +99,10 @@ const main = async () => {
 
   const identifySchema = Joi.string().guid({ version: 'uuidv4' }).required()
 
+  const delay = ms => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
   /**
    * @api {post} /api/event Log a user event
    * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam
@@ -116,6 +120,18 @@ const main = async () => {
       event: eventSchema,
       properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
     }))
+
+    /**
+     * Temporary code to ignore the 'request:failed' event and delay the repsonse to
+     * slow the browser requests down and reduce the errors, and getting the client out of
+     * the degenerative state
+     */
+    const { event } = req.body
+    if (event === 'request:failed') {
+      await delay(10000)
+      return new Response(200)
+    }
+
     const data = _.update('properties', properties => ({
       ...properties,
       token,
