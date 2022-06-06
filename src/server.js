@@ -13,6 +13,10 @@ const userDistinctId = user => {
   return `google:${user.userSubjectId}`
 }
 
+const delay = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 const fetchOk = async (url, { serviceName, ...options } = {}) => {
   const res = await fetch(url, options).catch(() => {
     throw new Response(503, `Unable to contact ${serviceName} service`)
@@ -62,6 +66,30 @@ const withOptionalAuth = wrappedFn => async (req, ...args) => {
   return wrappedFn(req, ...args)
 }
 
+/**
+ * Temporary wrapper to ignore the 'request:failed' event and delay the repsonse to
+ * slow the browser requests down and reduce the errors, and getting the client out of
+ * the degenerative state. This wrapper will prevent calls to sam.
+ */
+const withBadEventHandling = (log, wrappedFn) => async (req, ...args) => {
+  const { event } = req.body
+
+  if (event === 'request:failed') {
+    const data = _.update('properties', properties => ({
+      ...properties,
+      event,
+      'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
+    }), req.body)
+
+    log(data)
+    await delay(10000)
+    return new Response(200)
+  } else {
+    return wrappedFn(req, ...args)
+  }
+}
+
+
 const main = async () => {
   const token = await getSecret({ project, secretName: 'mixpanel-api' })
   const log = logger({ project, logName: 'metrics' })
@@ -99,10 +127,6 @@ const main = async () => {
 
   const identifySchema = Joi.string().guid({ version: 'uuidv4' }).required()
 
-  const delay = ms => {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
   /**
    * @api {post} /api/event Log a user event
    * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam
@@ -115,7 +139,7 @@ const main = async () => {
    * @apiParam {String} properties.appId The application
    * @apiSuccess (Success 200) -
    */
-  app.post('/api/event', promiseHandler(withOptionalAuth(async req => {
+  app.post('/api/event', promiseHandler(withBadEventHandling(log, withOptionalAuth(async req => {
     validateInput(req.body, Joi.object({
       event: eventSchema,
       properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
@@ -127,28 +151,12 @@ const main = async () => {
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
 
-    /**
-     * Temporary code to ignore the 'request:failed' event and delay the repsonse to
-     * slow the browser requests down and reduce the errors, and getting the client out of
-     * the degenerative state
-     */
-    const { event } = req.body
-    if (event === 'request:failed') {
-      const failedRequestData = _.update('properties', properties => ({
-        ...properties,
-        event
-      }), data)
-      log(failedRequestData)
-      await delay(10000)
-      return new Response(200)
-    }
-
     await Promise.all([
       log(data),
       token && fetchMixpanel('track', { data })
     ])
     return new Response(200)
-  })))
+  }))))
 
   /**
    * @api {post} /api/identify Merge two user id's
