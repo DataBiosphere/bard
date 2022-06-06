@@ -136,7 +136,7 @@ const main = async () => {
     if (event === 'request:failed') {
       const failedRequestData = _.update('properties', properties => ({
         ...properties,
-        event: event
+        event
       }), data)
       log(failedRequestData)
       await delay(10000)
