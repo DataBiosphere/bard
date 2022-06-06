@@ -121,6 +121,12 @@ const main = async () => {
       properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
     }))
 
+    const data = _.update('properties', properties => ({
+      ...properties,
+      token,
+      'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
+    }), req.body)
+
     /**
      * Temporary code to ignore the 'request:failed' event and delay the repsonse to
      * slow the browser requests down and reduce the errors, and getting the client out of
@@ -128,15 +134,15 @@ const main = async () => {
      */
     const { event } = req.body
     if (event === 'request:failed') {
+      const failedRequestData = _.update('properties', properties => ({
+        ...properties,
+        event: event
+      }), data)
+      log(failedRequestData)
       await delay(10000)
       return new Response(200)
     }
 
-    const data = _.update('properties', properties => ({
-      ...properties,
-      token,
-      'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
-    }), req.body)
     await Promise.all([
       log(data),
       token && fetchMixpanel('track', { data })
