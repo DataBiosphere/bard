@@ -7,7 +7,7 @@ const { project, orchestrationRoot, samRoot } = require('../config')
 const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 
 const userDistinctId = user => {
   return `google:${user.userSubjectId}`

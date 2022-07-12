@@ -49,17 +49,6 @@ jobs:
           paths:
             - docs
             - node_modules
-  build-cloud-function:
-    executor: node
-    steps:
-      - checkout
-      - run:
-          working_directory: cloud_functions
-          command: yarn install --frozen-lockfile
-      - run:
-          working_directory: cloud_functions
-          command: yarn test
-
   deploy-dev:
     executor: gcloud
     steps:
@@ -88,7 +77,6 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - build-cloud-function
       - deploy-dev:
           requires:
             - build
