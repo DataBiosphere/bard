@@ -41,7 +41,32 @@ Note that there is currently no separate development environment for mixpanel, s
     ```sh
     yarn run lint
     ```
-   
+
+## Deploying
+**Note**: The deploy process will overwrite any `./config.json` you may currently be using. Before running these scripts, make a backup of this file if you have any interesting config that you'd like to preserve (i.e. not just unmodified copies of files in `./config/`).
+
+Bard deployment is fully manual. You must have the repo cloned locally. There are 2 scripts in `./scripts/`:
+* `deploy-all-but-prod.sh`: Deploys to dev, alpha, perf, and staging using their respective config files in `./config/`. Run this with your @broadinstitute.org account.
+* `deploy-prod.sh`: Deploys to prod using `./config/prod.json`. Run this with your @test.firecloud.org account.
+
+Both of these scripts run
+```sh
+yarn install
+yarn list
+yarn generate-docs
+```
+prior to deploying to make sure that local assets are up-to-date. They then use `gcloud app deploy` to deploy a new version of the Google AppEngine app; make sure you have the correct account active for the environment(s) you're deploying.
+
+To use these scripts:
+1. Make sure your local clone is up-to-date with the remote `dev` branch.
+2. Back-up your local `./config.json` if you want to keep it.
+3. Select which of the above scripts you need to run. Note the Google account needed.
+4. Make sure that `gcloud auth list` indicates that your account is active based on the requirements listed above.
+5. Run the script, e.g. `./scripts/deploy-all-but-prod.sh`.
+6. (optional) Restore your preferred `./config.json`.
+
+The script will copy the appropriate config files out of `./config/` as needed, overwriting `./config.json`. At the end, the script will delete `./config.json` to prevent you from accidentally running Bard locally with an unexpected config. Once the script is done, you can restore whatever `./config.json` you need.
+
 ## Working with the track user event endpoint:
 #### Notes:
 - This endpoint optionally requires an authorization header, see below for each use case.
