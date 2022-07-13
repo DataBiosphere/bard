@@ -47,7 +47,7 @@ Note that there is currently no separate development environment for mixpanel, s
 
 Bard deployment is fully manual. You must have the repo cloned locally. There are 2 scripts in `./scripts/`:
 * `deploy-all-but-prod.sh`: Deploys to dev, alpha, perf, and staging using their respective config files in `./config/`. Run this with your @broadinstitute.org account.
-* `deploy-prod.sh`: Deploys to prod using `./config/prod.json`. Run this with your @test.firecloud.org account.
+* `deploy-prod.sh`: Deploys to prod using `./config/prod.json`. Run this with your @firecloud.org account.
 
 Both of these scripts run
 ```sh
