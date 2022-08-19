@@ -198,12 +198,15 @@ const main = async () => {
       { headers: { authorization: req.headers.authorization }, serviceName: 'profile' }
     )
 
-    // The user id we get back from Orch is only sometimes the same as the 
-    // Sam user id (req.user.userSubjectId). Make sure to use the Sam user 
-    // id when identifying users to MixPanel, since this is the identifier 
-    // used by all other Bard functions. See SUP-686 for more detail.
-    const { orchUserId, keyValuePairs } = await res.json()
-    const email = _.get('value', _.find({ key: 'anonymousGroup' }, keyValuePairs))
+    /*
+     * The user id we get back from Orch is only sometimes the same as the
+     * Sam user id (req.user.userSubjectId). Make sure to use the Sam user
+     * id when identifying users to MixPanel, since this is the identifier
+     * used by all other Bard functions. See SUP-686 for more detail.
+     */
+    const response = await res.json()
+    const email = _.get('value', _.find({ key: 'anonymousGroup' }, response.keyValuePairs))
+    console.log(email)
     const data = {
       '$token': token,
       '$distinct_id': userDistinctId(req.user),
