@@ -192,23 +192,28 @@ const main = async () => {
    * @apiGroup Profile
    * @apiSuccess (Success 200) -
    */
-  app.post('/api/syncProfile', promiseHandler(async req => {
+  app.post('/api/syncProfile', promiseHandler(withAuth(async req => {
     const res = await fetchOk(
       `${orchestrationRoot}/register/profile`,
       { headers: { authorization: req.headers.authorization }, serviceName: 'profile' }
     )
-    const { userId, keyValuePairs } = await res.json()
+
+    // The user id we get back from Orch is only sometimes the same as the 
+    // Sam user id (req.user.userSubjectId). Make sure to use the Sam user 
+    // id when identifying users to MixPanel, since this is the identifier 
+    // used by all other Bard functions. See SUP-686 for more detail.
+    const { orchUserId, keyValuePairs } = await res.json()
     const email = _.get('value', _.find({ key: 'anonymousGroup' }, keyValuePairs))
     const data = {
       '$token': token,
-      '$distinct_id': `google:${userId}`,
+      '$distinct_id': userDistinctId(req.user),
       '$set': { '$email': email }
     }
     if (token) {
       await fetchMixpanel('engage', { data })
     }
     return new Response(200)
-  }))
+  })))
 }
 
 main().catch(console.error)
