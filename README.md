@@ -19,7 +19,7 @@ For more info on how to leverage Mixpanel for your needs check out the documenta
 ## Developing
 Note that there is currently no separate development environment for mixpanel, so any changes will affect the real system. If you enable the mixpanel API with a token, events will get pushed to mixpanel. Use caution.
 
-1. Download a key for the app engine default service account terra-metrics-dev@appspot.gserviceaccount.com and note the location
+1. Create a new key for the app engine default service account terra-bard-dev@appspot.gserviceaccount.com. This will cause a JSON file to be downloaded to your machine. Note its location.
 2. Install the dependencies
 
     ```sh
