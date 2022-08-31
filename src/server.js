@@ -206,7 +206,6 @@ const main = async () => {
      */
     const response = await res.json()
     const email = _.get('value', _.find({ key: 'anonymousGroup' }, response.keyValuePairs))
-    console.log(email)
     const data = {
       '$token': token,
       '$distinct_id': userDistinctId(req.user),
