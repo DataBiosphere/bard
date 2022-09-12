@@ -213,7 +213,7 @@ const main = async () => {
       '$distinct_id': userDistinctId(req.user),
       '$set': {
         '$email': anonEmail,
-        'accountType': getAccountType(realEmail)
+        '$accountType': getAccountType(realEmail)
       }
     }
     if (token) {
