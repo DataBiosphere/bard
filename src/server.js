@@ -8,6 +8,7 @@ const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('joi')
+const { getAccountType } = require('./account-type-utils')
 
 const userDistinctId = user => {
   return `google:${user.userSubjectId}`
@@ -205,11 +206,15 @@ const main = async () => {
      * used by all other Bard functions. See SUP-686 for more detail.
      */
     const response = await res.json()
-    const email = _.get('value', _.find({ key: 'anonymousGroup' }, response.keyValuePairs))
+    const anonEmail = _.get('value', _.find({ key: 'anonymousGroup' }, response.keyValuePairs))
+    const realEmail = _.get('value', _.find({ key: 'email' }, response.keyValuePairs))
     const data = {
       '$token': token,
       '$distinct_id': userDistinctId(req.user),
-      '$set': { '$email': email }
+      '$set': {
+        '$email': anonEmail,
+        'accountType': getAccountType(realEmail)
+      }
     }
     if (token) {
       await fetchMixpanel('engage', { data })
