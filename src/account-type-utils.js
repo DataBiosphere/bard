@@ -1,4 +1,5 @@
 const validator = require('validator')
+const _ = require('lodash')
 
 /*
  * Returns the account type based on the user's email address
@@ -38,25 +39,21 @@ const domainTlds = {
   'gov': userTypes.GovUser
 }
 
-
 const getAccountType = email => {
   if (!validator.isEmail(email)) {
     return userTypes.Other
   }
-
-  const emailDomain = email.split('@').pop()
-
-  for (const [domain, accountType] of Object.entries(domainTlds)) {
-    if (emailDomain.endsWith(domain) || generalTld.some(tld => emailDomain.endsWith(`.${domain}.${tld}`))) {
-      return accountType
+  
+  const domain = '.' + email.split('@').pop()
+  const lastTwoDomainParts = '.' + _.join(_.takeRight(domain.split('.'), 2), '.')
+ 
+  const accountType = _.map(domainTlds, (value, key) => {
+    if (domain.endsWith(key) || _.some(generalTld, tld => lastTwoDomainParts.endsWith(`${key}.${tld}`))) {
+      return value
     }
-  }
-
-  if (generalTld.some(tld => emailDomain.endsWith(`.${tld}`))) {
-    return userTypes.EnterpriseUser
-  }
-
-  return userTypes.Other
+  })
+  
+  return _.find(accountType) || userTypes.Other
 }
 
 module.exports = { getAccountType }
