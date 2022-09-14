@@ -4,6 +4,18 @@
  *
  */
 
+const userTypes = {
+    BroadEmployee: 'Broad Employee',
+    VerilyEmployee: 'Verily Employee',
+    IndependentUser: 'Independent User',
+    EnterpriseUser: 'Enterprise User',
+    ServiceAccountUser: 'Service Account User',
+    EducationalInstituteUser: 'Educational Institute User',
+    NonProfitUser: 'Non-profit User',
+    GovUser: 'Government User',
+    Other: 'Other'
+}
+
 const generalTld = [
   'com', 'net', 'io', 'ai', 'co', 'app', 'us', 'uk', 'ca',
   'de', 'fr', 'jp', 'au', 'ru', 'ch', 'se', 'no', 'nl', 'it',
@@ -13,15 +25,15 @@ const generalTld = [
 ]
 
 const domainTlds = {
-  'broadinstitute.org': 'Broad Employee',
-  'firecloud.org': 'Broad Employee',
-  'verily.com': 'Verily Employee',
-  'google.com': 'Verily Employee',
-  'gmail.com': 'Independent User',
-  'gserviceaccount.com': 'Service Account User',
-  'edu': 'Educational Institute User',
-  'org': 'Non-profit User',
-  'gov': 'Government User'
+  'broadinstitute.org': userTypes.BroadEmployee,
+  'firecloud.org': userTypes.BroadEmployee,
+  'verily.com': userTypes.VerilyEmployee,
+  'google.com': userTypes.VerilyEmployee,
+  'gmail.com': userTypes.IndependentUser,
+  'gserviceaccount.com': userTypes.ServiceAccountUser,
+  'edu': userTypes.EducationalInstituteUser,
+  'org': userTypes.NonProfitUser,
+  'gov': userTypes.GovUser 
 }
 
 const validateEmail = email => {
@@ -34,7 +46,7 @@ const validateEmail = email => {
 
 const getAccountType = email => {
   if (!validateEmail(email)) {
-    return 'Other'
+    return userTypes.Other 
   }
 
   const emailDomain = email.split('@').pop()
@@ -46,10 +58,10 @@ const getAccountType = email => {
   }
 
   if (generalTld.some(tld => emailDomain.endsWith(`.${tld}`))) {
-    return 'Enterprise User'
+    return userTypes.EnterpriseUser 
   }
 
-  return 'Other'
+  return userTypes.Other 
 }
 
 module.exports = { getAccountType }
