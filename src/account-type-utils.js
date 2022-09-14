@@ -48,6 +48,8 @@ const getAccountType = email => {
   if (generalTld.some(tld => emailDomain.endsWith(`.${tld}`))) {
     return 'Enterprise User'
   }
+
+  return 'Other'
 }
 
 module.exports = { getAccountType }
