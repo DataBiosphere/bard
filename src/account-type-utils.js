@@ -28,15 +28,15 @@ const generalTld = [
 ]
 
 const domainTlds = {
-  'broadinstitute.org': userTypes.BroadEmployee,
-  'firecloud.org': userTypes.BroadEmployee,
-  'verily.com': userTypes.VerilyEmployee,
-  'google.com': userTypes.VerilyEmployee,
-  'gmail.com': userTypes.IndependentUser,
-  'gserviceaccount.com': userTypes.ServiceAccountUser,
-  'edu': userTypes.EducationalInstituteUser,
-  'org': userTypes.NonProfitUser,
-  'gov': userTypes.GovUser
+  '.broadinstitute.org': userTypes.BroadEmployee,
+  '.firecloud.org': userTypes.BroadEmployee,
+  '.verily.com': userTypes.VerilyEmployee,
+  '.google.com': userTypes.VerilyEmployee,
+  '.gmail.com': userTypes.IndependentUser,
+  '.gserviceaccount.com': userTypes.ServiceAccountUser,
+  '.edu': userTypes.EducationalInstituteUser,
+  '.org': userTypes.NonProfitUser,
+  '.gov': userTypes.GovUser
 }
 
 const getAccountType = email => {
