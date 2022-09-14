@@ -43,16 +43,16 @@ const getAccountType = email => {
   if (!validator.isEmail(email)) {
     return userTypes.Other
   }
-  
+ 
   const domain = '.' + email.split('@').pop()
   const lastTwoDomainParts = '.' + _.join(_.takeRight(domain.split('.'), 2), '.')
- 
+
   const accountType = _.map(domainTlds, (value, key) => {
     if (domain.endsWith(key) || _.some(generalTld, tld => lastTwoDomainParts.endsWith(`${key}.${tld}`))) {
       return value
     }
   })
-  
+ 
   return _.find(accountType) || userTypes.Other
 }
 
