@@ -1,3 +1,5 @@
+const validator = require('validator')
+
 /*
  * Returns the account type based on the user's email address
  * to use as a Mixpanel property on the user profile.
@@ -5,15 +7,15 @@
  */
 
 const userTypes = {
-    BroadEmployee: 'Broad Employee',
-    VerilyEmployee: 'Verily Employee',
-    IndependentUser: 'Independent User',
-    EnterpriseUser: 'Enterprise User',
-    ServiceAccountUser: 'Service Account User',
-    EducationalInstituteUser: 'Educational Institute User',
-    NonProfitUser: 'Non-profit User',
-    GovUser: 'Government User',
-    Other: 'Other'
+  BroadEmployee: 'Broad Employee',
+  VerilyEmployee: 'Verily Employee',
+  IndependentUser: 'Independent User',
+  EnterpriseUser: 'Enterprise User',
+  ServiceAccountUser: 'Service Account User',
+  EducationalInstituteUser: 'Educational Institute User',
+  NonProfitUser: 'Non-profit User',
+  GovUser: 'Government User',
+  Other: 'Other'
 }
 
 const generalTld = [
@@ -33,20 +35,13 @@ const domainTlds = {
   'gserviceaccount.com': userTypes.ServiceAccountUser,
   'edu': userTypes.EducationalInstituteUser,
   'org': userTypes.NonProfitUser,
-  'gov': userTypes.GovUser 
+  'gov': userTypes.GovUser
 }
 
-const validateEmail = email => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    )
-}
 
 const getAccountType = email => {
-  if (!validateEmail(email)) {
-    return userTypes.Other 
+  if (!validator.isEmail(email)) {
+    return userTypes.Other
   }
 
   const emailDomain = email.split('@').pop()
@@ -58,10 +53,10 @@ const getAccountType = email => {
   }
 
   if (generalTld.some(tld => emailDomain.endsWith(`.${tld}`))) {
-    return userTypes.EnterpriseUser 
+    return userTypes.EnterpriseUser
   }
 
-  return userTypes.Other 
+  return userTypes.Other
 }
 
 module.exports = { getAccountType }
