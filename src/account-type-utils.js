@@ -20,7 +20,7 @@ const userTypes = {
 }
 
 const generalTld = [
-  'com', 'net', 'io', 'ai', 'co', 'app', 'us', 'uk', 'ca',
+  'co', 'app', 'us', 'uk', 'ca',
   'de', 'fr', 'jp', 'au', 'ru', 'ch', 'se', 'no', 'nl', 'it',
   'es', 'dk', 'cz', 'br', 'be', 'at', 'ar', 'in', 'mx', 'pl',
   'pt', 'fi', 'gr', 'hk', 'id', 'ie', 'il', 'is', 'kr', 'my',
@@ -34,6 +34,12 @@ const domainTlds = {
   '.google.com': userTypes.VerilyEmployee,
   '.gmail.com': userTypes.IndependentUser,
   '.gserviceaccount.com': userTypes.ServiceAccountUser,
+  '.com': userTypes.EnterpriseUser,
+  '.net': userTypes.EnterpriseUser,
+  '.co': userTypes.EnterpriseUser,
+  '.io': userTypes.EnterpriseUser,
+  '.ca': userTypes.EnterpriseUser,
+  '.ai': userTypes.EnterpriseUser,
   '.edu': userTypes.EducationalInstituteUser,
   '.org': userTypes.NonProfitUser,
   '.gov': userTypes.GovUser
