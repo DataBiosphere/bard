@@ -43,7 +43,7 @@ const getAccountType = email => {
   if (!validator.isEmail(email)) {
     return userTypes.Other
   }
- 
+
   const domain = '.' + email.split('@').pop()
   const lastTwoDomainParts = '.' + _.join(_.takeRight(domain.split('.'), 2), '.')
 
@@ -52,7 +52,7 @@ const getAccountType = email => {
       return value
     }
   })
- 
+
   return _.find(accountType) || userTypes.Other
 }
 
