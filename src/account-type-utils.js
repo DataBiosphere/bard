@@ -1,23 +1,26 @@
 const validator = require('validator')
 const _ = require('lodash')
 
-/*
- * Returns the account type based on the user's email address
- * to use as a Mixpanel property on the user profile.
+/**
+ * Maps the email domain to an account type.
+ * The key is the account type, the value is a list of domains that map to that account type.
+ *
+ * @param {string} email The email address to map.
+ * @returns {string} Returns the account type related to the domain.
+ * @example
+ *
+ * getAccountType('gdematto@broadinstitute.org')
+ * // => 'Broad Employee'
+ *
+ * getAccountType('email@gmail.com')
+ * // => 'Independent User'
+ *
+ * getAccountType('email@mit.edu')
+ * // => 'Educational Institution User'
  *
  */
 
-const accountTypeMapping = {
-  'Broad Employee': ['.broadinstitute.org', '.firecloud.org'],
-  'Verily Employee': ['.verily.com', '.verilylifesciences.com', '.google.com'],
-  'Service Account User': ['.gserviceaccount.com'],
-  'Independent User': ['.gmail.com'],
-  'Educational Institute User': ['.edu'],
-  'Non-profit User': ['.org'],
-  'Government User': ['.gov'],
-  'Enterprise User': ['.com', '.net', '.io', '.co', '.app', '.us', '.uk', '.ca']
-}
-
+const accountTypeMapping = require('../config/account-types.json')
 
 const getAccountType = email => {
   if (!validator.isEmail(email)) {
