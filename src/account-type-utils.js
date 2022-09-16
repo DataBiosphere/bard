@@ -15,7 +15,7 @@ const accountTypeMapping = {
   'Educational Institute User': ['.edu'],
   'Non-profit User': ['.org'],
   'Government User': ['.gov'],
-  'Enterprise User': ['.com', '.net', '.io', '.co', '.app', '.us', 'uk', 'ca']
+  'Enterprise User': ['.com', '.net', '.io', '.co', '.app', '.us', '.uk', '.ca']
 }
 
 
