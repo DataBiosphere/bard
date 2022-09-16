@@ -1,9 +1,10 @@
-const validator = require('validator')
 const _ = require('lodash')
+const accountTypeMapping = require('../config/account-types.json')
 
 /**
  * Maps the email domain to an account type.
- * The key is the account type, the value is a list of domains that map to that account type.
+ * To add or remove types, please refer to the ../config/account-types.json file.
+ * The key is the account type, and the value is the mapped domains.
  *
  * @param {string} email The email address to map.
  * @returns {string} Returns the account type related to the domain.
@@ -20,10 +21,10 @@ const _ = require('lodash')
  *
  */
 
-const accountTypeMapping = require('../config/account-types.json')
-
 const getAccountType = email => {
-  if (!validator.isEmail(email)) {
+  if (!_.includes(email, '@') ||
+      !_.includes(email, '.') ||
+      _.size(email) === 0) {
     return 'Unknown'
   }
 

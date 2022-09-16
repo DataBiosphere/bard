@@ -12,8 +12,7 @@
     "express": "^4.18.1",
     "joi": "^17.6.0",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.7",
-    "validator": "^13.7.0"
+    "node-fetch": "^2.6.7"
   },
   "scripts": {
     "generate-docs": "apidoc -i src -o docs",
