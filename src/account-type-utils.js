@@ -30,10 +30,11 @@ const getAccountType = email => {
     .takeRight(2)
     .value()
 
-  return _.findKey(accountTypeMapping, domainList => _.some(domainList, domainItem =>
-    _.startsWith(`.${domain}.${topLevelDomain}`, domainItem) ||
-    _.startsWith(`.${topLevelDomain}`, domainItem)))
-    || 'Unknown'
+  return _.findKey(accountTypeMapping, domainList =>
+    _.some(domainList, domainItem =>
+      _.startsWith(`.${domain}.${topLevelDomain}`, domainItem) ||
+      _.startsWith(`.${topLevelDomain}`, domainItem))
+  ) || 'Unknown'
 }
 
 module.exports = { getAccountType }
