@@ -7,13 +7,6 @@ const _ = require('lodash')
  *
  */
 
-const generalTld = [
-  'de', 'fr', 'jp', 'au', 'ru', 'ch', 'se', 'no', 'nl', 'it',
-  'es', 'dk', 'cz', 'br', 'be', 'at', 'ar', 'in', 'mx', 'pl',
-  'pt', 'fi', 'gr', 'hk', 'id', 'ie', 'il', 'is', 'kr', 'my',
-  'nz', 'ph', 'sg', 'th', 'tw', 'vn', 'cn'
-]
-
 const accountTypeMapping = {
   'Broad Employee': ['.broadinstitute.org', '.firecloud.org'],
   'Verily Employee': ['.verily.com', '.verilylifesciences.com', '.google.com'],
@@ -31,25 +24,16 @@ const getAccountType = email => {
     return 'Unknown'
   }
 
-  const domain = '.' + email.split('@').pop()
-  const lastTwoDomainParts = '.' + _.join(_.takeRight(domain.split('.'), 2), '.')
+  const [domain, topLevelDomain] = _.chain(email.split('@'))
+    .takeRight(1)
+    .split('.')
+    .takeRight(2)
+    .value()
 
-  const accountType = _.map(accountTypeMapping, (domainList, userType) => {
-    if (_.some(domainList, domainItem => _.endsWith(domain, domainItem))) {
-      return userType
-    }
-
-    const matchingTld = _.some(domainList, domainObj => {
-      return _.some(generalTld, tld => {
-        return lastTwoDomainParts === `${domainObj}.${tld}` ||
-               lastTwoDomainParts === `${domainObj}.${tld}.`
-      })
-    })
-
-    return _.size(domainList) === 1 && matchingTld && userType
-  })
-
-  return _.find(accountType) || 'Unknown'
+  return _.findKey(accountTypeMapping, domainList => _.some(domainList, domainItem =>
+    _.startsWith(`.${domain}.${topLevelDomain}`, domainItem) ||
+    _.startsWith(`.${topLevelDomain}`, domainItem)))
+    || 'Unknown'
 }
 
 module.exports = { getAccountType }
