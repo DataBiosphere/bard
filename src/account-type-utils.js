@@ -23,8 +23,7 @@ const accountTypeMapping = require('../config/account-types.json')
 
 const getAccountType = email => {
   if (!_.includes(email, '@') ||
-      !_.includes(email, '.') ||
-      _.size(email) === 0) {
+      !_.includes(email, '.')) {
     return 'Unknown'
   }
 
