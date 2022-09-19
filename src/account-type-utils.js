@@ -27,7 +27,9 @@ const getAccountType = email => {
     return 'Unknown'
   }
 
-  const [domain, topLevelDomain] = _.chain(email.split('@'))
+  const [domain, topLevelDomain] = _
+    .chain(email)
+    .split('@')
     .takeRight(1)
     .split('.')
     .takeRight(2)
