@@ -1,0 +1,36 @@
+{
+    "Broad Employee":[
+       ".broadinstitute.org",
+       ".firecloud.org"
+    ],
+    "Verily Employee":[
+       ".verily.com",
+       ".verilylifesciences.com",
+       ".google.com"
+    ],
+    "Service Account User":[
+       ".gserviceaccount.com"
+    ],
+    "Independent User":[
+       ".gmail.com"
+    ],
+    "Educational Institute User":[
+       ".edu"
+    ],
+    "Non-profit User":[
+       ".org"
+    ],
+    "Government User":[
+       ".gov"
+    ],
+    "Enterprise User":[
+       ".com",
+       ".net",
+       ".io",
+       ".co",
+       ".app",
+       ".us",
+       ".uk",
+       ".ca"
+    ]
+ }
