@@ -62,16 +62,16 @@ const getAccountType = email => {
 const getEmailDomain = email => {
   if (!_.includes(email, '@') ||
     !_.includes(email, '.')) {
-  return 'Unknown'
+    return 'Unknown'
   }
 
   const [domain] = _
-  .chain(email)
-  .split('@')
-  .takeRight(1)
-  .value()
-  
-  return domain 
+    .chain(email)
+    .split('@')
+    .takeRight(1)
+    .value()
+
+  return domain
 }
 
 
