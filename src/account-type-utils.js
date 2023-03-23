@@ -42,4 +42,28 @@ const getAccountType = email => {
   ) || 'Unknown'
 }
 
-module.exports = { getAccountType }
+/**
+ * Retrieves the domain name from the given email address and returns it as a string.
+ *
+ * @param {string} email The email address to retrieve the domain from.
+ * @returns {string} Returns the domain name or 'Unknown' if no domain name is found.
+ * @example
+ *
+ * getEmailDomain('johndoe@example.com')
+ * // => 'example.com'
+ *
+ * getEmailDomain('johndoe.example.com')
+ * // => 'Unknown'
+ *
+ * getEmailDomain('johndoe@example')
+ * // => 'Unknown'
+ *
+ */
+const getEmailDomain = email => {
+  return email.includes('@') && email.includes('.')
+    ? _.last(email.split('@'))
+    : 'Unknown'
+}
+
+
+module.exports = { getAccountType, getEmailDomain }

@@ -8,7 +8,7 @@ const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('joi')
-const { getAccountType } = require('./account-type-utils')
+const { getAccountType, getEmailDomain } = require('./account-type-utils')
 
 const userDistinctId = user => {
   return `google:${user.userSubjectId}`
@@ -213,7 +213,8 @@ const main = async () => {
       '$distinct_id': userDistinctId(req.user),
       '$set': {
         '$email': anonEmail,
-        '$accountType': getAccountType(realEmail)
+        '$accountType': getAccountType(realEmail),
+        '$emailDomain': getEmailDomain(realEmail)
       }
     }
     if (token) {
