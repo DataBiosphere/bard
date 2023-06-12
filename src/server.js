@@ -153,7 +153,7 @@ const main = async () => {
     }), req.body)
     const properties = data['properties']
     const useBigQuery = properties['useBigQuery']
-    if (useBigQuery) {
+    if (useBigQuery === true) {
       await insertRowsAsStream(data)
     } else {
       await Promise.all([
