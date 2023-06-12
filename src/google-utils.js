@@ -1,6 +1,7 @@
 const { Logging } = require('@google-cloud/logging')
 const { BigQuery } = require('@google-cloud/bigquery')
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager')
+const { bigQueryProject, bigQueryDatasetId, bigQueryTableId  } = require('../config')
 
 const logger = ({ project, logName, type = 'global' }) => {
   const logging = new Logging({ projectId: project })
@@ -61,9 +62,10 @@ async function createBigQueryTableIfNotExists(datasetId, tableId) {
   }
 }
 
-//TODO: Change to use bigquery data warehouse dataset
-const bigquery = new BigQuery({ projectId: 'broad-jade-dev' })
-async function insertRowsAsStream(datasetId, tableId, data) {
+const bigquery = new BigQuery({ projectId: bigQueryProject })
+async function insertRowsAsStream(data) {
+  const datasetId = bigQueryDatasetId
+  const tableId = bigQueryTableId
   await createBigQueryTableIfNotExists(datasetId, tableId)
   console.log(`Storing event data in BigQuery dataset ${datasetId}:${tableId}`)
   const properties = data['properties']

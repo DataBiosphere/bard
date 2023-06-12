@@ -152,10 +152,9 @@ const main = async () => {
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
     const properties = data['properties']
-    const datasetId = properties['bigQueryDatasetId']
-    const tableId = properties['bigQueryTableId']
-    if (datasetId && tableId) {
-      await insertRowsAsStream(datasetId, tableId, data)
+    const useBigQuery = properties['useBigQuery']
+    if (useBigQuery) {
+      await insertRowsAsStream(data)
     } else {
       await Promise.all([
         log(data),
