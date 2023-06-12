@@ -4,7 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const { promiseHandler, Response, validateInput } = require('./utils')
 const { project, orchestrationRoot, samRoot } = require('../config')
-const { logger, getSecret } = require('./google-utils')
+const { logger, getSecret, insertRowsAsStream } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('joi')
@@ -151,10 +151,17 @@ const main = async () => {
       token,
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
-    await Promise.all([
-      log(data),
-      token && fetchMixpanel('track', { data })
-    ])
+    const properties = data['properties']
+    const datasetId = properties['bigQueryDatasetId']
+    const tableId = properties['bigQueryTableId']
+    if (datasetId && tableId) {
+      await insertRowsAsStream(datasetId, tableId, data)
+    } else {
+      await Promise.all([
+        log(data),
+        token && fetchMixpanel('track', { data })
+      ])
+    }
     return new Response(200)
   }))))
 

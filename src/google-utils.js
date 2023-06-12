@@ -1,4 +1,5 @@
 const { Logging } = require('@google-cloud/logging')
+const { BigQuery } = require('@google-cloud/bigquery')
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager')
 
 const logger = ({ project, logName, type = 'global' }) => {
@@ -29,7 +30,60 @@ const getSecret = async ({ project, secretName }) =>  {
   }
 }
 
+// https://cloud.google.com/bigquery/docs/creating-partitioned-tables
+async function createBigQueryTable(datasetId, tableId) {
+  const schema = 'event:string, method:string, path:string, appId:string, distinctId:string, properties:JSON'
+  const options = {
+    schema: schema,
+    location: 'US',
+    timePartitioning: {
+      type: 'DAY',
+      expirationMS: '7776000000'
+    }
+  }
+  const [table] = await bigquery
+    .dataset(datasetId)
+    .createTable(tableId, options)
+  console.log(`Table ${table.id} created with partitioning: `)
+  console.log(table.metadata.timePartitioning)
+}
+
+async function createBigQueryTableIfNotExists(datasetId, tableId) {
+  const dataset = bigquery.dataset(datasetId)
+  const table = dataset.table(tableId)
+  try {
+    await table.get()
+  } catch (e) {
+    if (e.code === 404) {
+      console.log(`${e.message} >>> Creating table: ${tableId}`)
+      await createBigQueryTable(datasetId, tableId)
+    }
+  }
+}
+
+//TODO: Change to use bigquery data warehouse dataset
+const bigquery = new BigQuery({ projectId: 'broad-jade-dev' })
+async function insertRowsAsStream(datasetId, tableId, data) {
+  await createBigQueryTableIfNotExists(datasetId, tableId)
+  console.log(`Storing event data in BigQuery dataset ${datasetId}:${tableId}`)
+  const properties = data['properties']
+  await bigquery
+    .dataset(datasetId)
+    .table(tableId)
+    .insert([
+      {
+        'event': data['event'],
+        'method': properties['method'],
+        'path': properties['path'],
+        'appId': properties['appId'],
+        'distinctId': properties['distinctId'],
+        'properties': JSON.stringify(properties)
+      }
+    ])
+}
+
 module.exports = {
   logger,
-  getSecret
+  getSecret,
+  insertRowsAsStream
 }
