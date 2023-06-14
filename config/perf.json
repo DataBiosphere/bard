@@ -1,8 +1,5 @@
 {
   "project": "terra-bard-perf",
   "orchestrationRoot": "https://firecloud-orchestration.dsde-perf.broadinstitute.org",
-  "samRoot": "https://sam.dsde-perf.broadinstitute.org",
-  "bigQueryProject": "broad-dsde-prod-analytics-dev",
-  "bigQueryDatasetId": "warehouse",
-  "bigQueryTableId": "mixpanel_perf_events"
+  "samRoot": "https://sam.dsde-perf.broadinstitute.org"
 }

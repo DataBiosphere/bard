@@ -4,7 +4,6 @@
   "main": "src/server.js",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/bigquery": "^6.2.0",
     "@google-cloud/logging": "^10.0.4",
     "@google-cloud/secret-manager": "^4.0.0",
     "body-parser": "^1.20.0",

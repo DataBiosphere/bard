@@ -1,8 +1,5 @@
 {
   "project": "terra-bard-alpha",
   "orchestrationRoot": "https://firecloud-orchestration.dsde-alpha.broadinstitute.org",
-  "samRoot": "https://sam.dsde-alpha.broadinstitute.org",
-  "bigQueryProject": "broad-dsde-prod-analytics-dev",
-  "bigQueryDatasetId": "warehouse",
-  "bigQueryTableId": "mixpanel_alpha_events"
+  "samRoot": "https://sam.dsde-alpha.broadinstitute.org"
 }

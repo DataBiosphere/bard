@@ -4,7 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const { promiseHandler, Response, validateInput } = require('./utils')
 const { project, orchestrationRoot, samRoot } = require('../config')
-const { logger, getSecret, insertRowsAsStream } = require('./google-utils')
+const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('joi')
@@ -131,7 +131,8 @@ const main = async () => {
 
   /**
    * @api {post} /api/event Log a user event
-   * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam
+   * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam.
+   *                 If properties['useBigQuery'] is true, only log the event (the logs will get sent to BigQuery via a log sink instead).
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
@@ -152,15 +153,11 @@ const main = async () => {
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
     const properties = data['properties']
-    const useBigQuery = properties['useBigQuery']
-    if (useBigQuery === true) {
-      await insertRowsAsStream(data)
-    } else {
-      await Promise.all([
-        log(data),
-        token && fetchMixpanel('track', { data })
-      ])
+    const promises = [log(data)]
+    if (!properties['useBigQuery']) {
+      promises.push(token && fetchMixpanel('track', { data }))
     }
+    await Promise.all(promises)
     return new Response(200)
   }))))
 
