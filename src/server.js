@@ -154,7 +154,8 @@ const main = async () => {
     }), req.body)
     const properties = data['properties']
     const promises = [log(data)]
-    if (!properties['useBigQuery']) {
+    const pushToMixpanel = properties['pushToMixpanel'] !== false
+    if (pushToMixpanel) {
       promises.push(token && fetchMixpanel('track', { data }))
     }
     await Promise.all(promises)
