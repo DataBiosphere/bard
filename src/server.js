@@ -131,7 +131,8 @@ const main = async () => {
 
   /**
    * @api {post} /api/event Log a user event
-   * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam
+   * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam.
+   *                 If properties['useBigQuery'] is true, only log the event (the logs will get sent to BigQuery via a log sink instead).
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
@@ -151,10 +152,13 @@ const main = async () => {
       token,
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
-    await Promise.all([
-      log(data),
-      token && fetchMixpanel('track', { data })
-    ])
+    const properties = data['properties']
+    const promises = [log(data)]
+    const pushToMixpanel = properties['pushToMixpanel'] !== false
+    if (pushToMixpanel) {
+      promises.push(token && fetchMixpanel('track', { data }))
+    }
+    await Promise.all(promises)
     return new Response(200)
   }))))
 
