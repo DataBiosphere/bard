@@ -132,7 +132,7 @@ const main = async () => {
   /**
    * @api {post} /api/event Log a user event
    * @apiDescription Records the event to a log and forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam.
-   *                 If properties['useBigQuery'] is true, only log the event (the logs will get sent to BigQuery via a log sink instead).
+   *                 If properties['pushToMixpanel'] is false, only log the event (the logs will still get sent to BigQuery via a log sink).
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
