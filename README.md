@@ -71,6 +71,18 @@ The script will copy the appropriate config files out of `./config/` as needed, 
 #### Notes:
 - This endpoint optionally requires an authorization header, see below for each use case.
 - When adding your own events please be sure to update the Lexicon in Mixpanel with the meaning of your events and property names. (E.x. Terra-UI added an event called `Workspace:Share` with a property called `numAdditions`. Updating the Lexicon on Mixpanel gives a description of each of these letting folks know that a `Workspace:Share` event occurs when a workspace is shared with at least one new person and that the `numAdditions` is the count of the users that the workspace was shared with.)
+- All events are logged in the GCP project defined in the Bard environment config file `./config/<env>.json`
+- In the dev and prod environments, log router sinks send all event logs with `logName="projects/terra-bard-dev/logs/metrics"` to a bigQuery dataset.
+  - In dev, the log sink ([bq-metrics](https://console.cloud.google.com/logs/router?project=terra-bard-dev)) sends events to:
+    - Project: `broad-dsde-analytics-dev`
+    - Dataset: `warehouse`
+    - Table: `metrics`
+  - In prod, the log sink ([bq-metrics](https://console.cloud.google.com/logs/router?authuser=3&project=terra-bard-prod)) sends events to:
+    - Project: `broad-dsde-prod-analytics-dev`
+    - Dataset: `warehouse`
+    - Table: `metrics`
+- If a service is sending too many events to mixPanel, setting the `pushToMixPanel` event property to `false` will
+  disable pushing the event to mixPanel (it is enabled by default). Because the logs are sent to bigQuery, it is still possible to query the metrics.
 
 ### Unregistered User Event Endpoint:
 This version of the endpoint does not require an authorization header. This is for use with users that are not signed into the application or have never registered and are considered anonymous users. This endpoint will then forward the event data for these users to Mixpanel identifying the user by a unique UUID4 id that your client application must provide to Bard.
