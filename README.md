@@ -45,8 +45,10 @@ Note that there is currently no separate development environment for mixpanel, s
 ## Deploying
 **Note**: The deploy process will overwrite any `./config.json` you may currently be using. Before running these scripts, make a backup of this file if you have any interesting config that you'd like to preserve (i.e. not just unmodified copies of files in `./config/`).
 
-Bard deployment is fully manual. You must have the repo cloned locally. There are 2 scripts in `./scripts/`:
-* `deploy-all-but-prod.sh`: Deploys to dev, alpha, perf, and staging using their respective config files in `./config/`. Run this with your @broadinstitute.org account.
+Bard non-production deploys will occur automatically on merge to `dev` via CircleCI. This deployment can be tested by triggering events in Terra dev and checking the dev MixPanel or logs.
+
+Bard production deployment is fully manual. You must have the repo cloned locally and the [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed. There are 2 scripts in `./scripts/`:
+* `deploy-all-but-prod.sh`: Deploys to dev, alpha, perf, and staging using their respective config files in `./config/`. Run this with your @broadinstitute.org account. *This will run automatically on merge, so you will likely not need this script.*
 * `deploy-prod.sh`: Deploys to prod using `./config/prod.json`. Run this with your @firecloud.org account.
 
 Both of these scripts run
@@ -136,4 +138,5 @@ Example:
 
   ```sh 
     yarn run generate-docs
+    open docs/index.html
   ```
