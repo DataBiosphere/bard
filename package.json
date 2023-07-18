@@ -14,6 +14,11 @@
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.7"
   },
+  "resolutions": {
+    "glob": "^9.0.0",
+    "optionator": "^0.9.3",
+    "semver": "^7.5.2"
+  },
   "scripts": {
     "generate-docs": "apidoc -i src -o docs",
     "lint": "eslint \"src/**/*.js\"",
