@@ -21,6 +21,7 @@
   },
   "scripts": {
     "generate-docs": "apidoc -i src -o docs",
+    "generate-swagger": "apidoc-openapi-3 -i src -o doc",
     "lint": "eslint \"src/**/*.js\"",
     "start": "node src/server.js",
     "start-dev": "nodemon"
