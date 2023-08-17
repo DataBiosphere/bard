@@ -17,6 +17,10 @@ const promiseHandler = fn => (req, res) => {
   return fn(req, res).then(handleValue, handleValue)
 }
 
+const redirectHandler = redirectToPath => (_req, res) => {
+  res.redirect(redirectToPath)
+}
+
 const validateInput = (value, schema) => {
   const { error } = schema.validate(value)
   if (error) {
@@ -27,5 +31,6 @@ const validateInput = (value, schema) => {
 module.exports = {
   Response,
   promiseHandler,
+  redirectHandler,
   validateInput
 }

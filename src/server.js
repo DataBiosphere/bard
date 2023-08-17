@@ -2,12 +2,14 @@ const _ = require('lodash/fp')
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { promiseHandler, Response, validateInput } = require('./utils')
+const { promiseHandler, Response, validateInput, redirectHandler } = require('./utils')
 const { project, orchestrationRoot, samRoot } = require('../config')
 const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('joi')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('../docs/swagger.json')
 const { getAccountType, getEmailDomain } = require('./account-type-utils')
 
 const userDistinctId = user => {
@@ -100,6 +102,13 @@ const main = async () => {
   app.use(bodyParser.json())
   app.use(cors())
   app.use('/docs', express.static('docs'))
+  // Host the swagger ui
+  const options = {
+    explorer: true
+  }
+  app.use('/swagger', swaggerUi.serve,   swaggerUi.setup(swaggerDocument, options))
+  // Redirect the root to the swagger ui
+  app.get('/', redirectHandler('/swagger'))
 
   app.listen(process.env.PORT || 8080)
 

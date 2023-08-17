@@ -141,4 +141,5 @@ Example:
     open docs/index.html
   ```
 
-  This will also generate a swagger.json file at docs/swagger.json 
+  This will also generate a swagger.json file at docs/swagger.json.  The swagger ui can be viewed by goin to the
+  root of the server (e.g. https://terra-bard-dev.appspot.com/docs)
