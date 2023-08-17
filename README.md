@@ -134,9 +134,11 @@ Example:
        to Mixpanel.
    
 ## Documentation
-  To generate the [API docs](https://terra-metrics-dev.appspot.com/docs) run
+  To generate the [API docs](https://terra-bard-dev.appspot.com/docs) run
 
   ```sh 
     yarn run generate-docs
     open docs/index.html
   ```
+
+  This will also generate a swagger.json file at docs/swagger.json 

@@ -108,10 +108,10 @@ const main = async () => {
    * @apiName status
    * @apiVersion 1.0.0
    * @apiGroup System
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.get('/status', promiseHandler(async () => {
-    return new Response(200)
+    return new Response(200, {})
   }))
 
   const eventSchema = Joi.string().pattern(/^\$/, { invert: true }).required()
@@ -140,7 +140,7 @@ const main = async () => {
    * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
    * @apiParam (Unregistered) {String{uuid4}} properties.distinct_id The id of the anon user required for client to pass if user is unregistered (forbidden if user is registered)
    * @apiParam {String} properties.appId The application
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/event', promiseHandler(withBadEventHandling(log, withOptionalAuth(async req => {
     validateInput(req.body, Joi.object({
@@ -169,7 +169,7 @@ const main = async () => {
    * @apiVersion 1.0.0
    * @apiGroup Events
    * @apiParam {String} anonId The distinct id of an anonymous user, this is required
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/identify', promiseHandler(withAuth(async req => {
     validateInput(req.body, Joi.object({ anonId: identifySchema }))
@@ -195,7 +195,7 @@ const main = async () => {
    * @apiName syncProfile
    * @apiVersion 1.0.0
    * @apiGroup Profile
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/syncProfile', promiseHandler(withAuth(async req => {
     const res = await fetchOk(

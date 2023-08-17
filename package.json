@@ -20,19 +20,15 @@
     "semver": "^7.5.2"
   },
   "scripts": {
-    "generate-docs": "apidoc -i src -o docs",
-    "generate-swagger": "apidoc-openapi-3 -i src -o doc",
+    "generate-docs": "apidoc -i src -o docs && apidoc-openapi -p ./apidoc_for_swagger.json  -s ./src/ -o ./docs/swagger.json",
     "lint": "eslint \"src/**/*.js\"",
     "start": "node src/server.js",
     "start-dev": "nodemon"
   },
   "devDependencies": {
     "apidoc": "^0.51.1",
+    "apidoc-openapi-3": "^1.0.2",
     "eslint": "^6.7.2",
     "nodemon": "^2.0.19"
-  },
-  "apidoc": {
-    "name": "bard",
-    "version": "1.0.0"
   }
 }
