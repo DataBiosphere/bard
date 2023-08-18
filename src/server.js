@@ -120,7 +120,7 @@ const main = async () => {
    * @apiSuccess (200) {String} response An empty string
    */
   app.get('/status', promiseHandler(async () => {
-    return new Response(200, {})
+    return new Response(200)
   }))
 
   const eventSchema = Joi.string().pattern(/^\$/, { invert: true }).required()
