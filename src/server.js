@@ -70,6 +70,16 @@ const withOptionalAuth = wrappedFn => async (req, ...args) => {
 }
 
 /**
+ * Decorate the data being logged with internal properties. These properties are not sent to mixpanel but only
+ * logged so that they make their way to the DW. Using snake case for terra_user to match mixpanel properties
+ * like `distinct_id`
+ */
+const decorateWithInternalProperties = (req, data) => {
+  const privateProperties = { properties: { 'terra_user_id': _.get('user.userSubjectId', req) } }
+  return _.merge(data, privateProperties)
+}
+
+/**
  * Temporary wrapper to ignore the 'request:failed' event and delay the response to
  * slow the browser requests down and reduce the errors, and getting the client out of
  * the degenerative state. This wrapper will prevent calls to sam.
@@ -85,7 +95,7 @@ const withBadEventHandling = (log, wrappedFn) => async (req, ...args) => {
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
 
-    log(data)
+    log(decorateWithInternalProperties(req, data))
     await delay(10000)
     return new Response(200)
   } else {
@@ -162,7 +172,7 @@ const main = async () => {
       'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
     }), req.body)
     const properties = data['properties']
-    const promises = [log(data)]
+    const promises = [log(decorateWithInternalProperties(req, data))]
     const pushToMixpanel = properties['pushToMixpanel'] !== false
     if (pushToMixpanel) {
       promises.push(token && fetchMixpanel('track', { data }))
@@ -192,7 +202,7 @@ const main = async () => {
       }
     }
     await Promise.all([
-      log(data),
+      log(decorateWithInternalProperties(req, data)),
       token && fetchMixpanel('track', { data })
     ])
     return new Response(200)
