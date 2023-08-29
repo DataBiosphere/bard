@@ -2,12 +2,14 @@ const _ = require('lodash/fp')
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { promiseHandler, Response, validateInput } = require('./utils')
+const { promiseHandler, Response, validateInput, redirectHandler } = require('./utils')
 const { project, orchestrationRoot, samRoot } = require('../config')
 const { logger, getSecret } = require('./google-utils')
 const btoa = require('btoa-lite')
 const fetch = require('node-fetch')
 const Joi = require('joi')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('../docs/swagger.json')
 const { getAccountType, getEmailDomain } = require('./account-type-utils')
 
 const userDistinctId = user => {
@@ -100,6 +102,13 @@ const main = async () => {
   app.use(bodyParser.json())
   app.use(cors())
   app.use('/docs', express.static('docs'))
+  // Host the swagger ui
+  const options = {
+    explorer: true
+  }
+  app.use('/swagger', swaggerUi.serve,   swaggerUi.setup(swaggerDocument, options))
+  // Redirect the root to the swagger ui
+  app.get('/', redirectHandler('/swagger'))
 
   app.listen(process.env.PORT || 8080)
 
@@ -108,7 +117,7 @@ const main = async () => {
    * @apiName status
    * @apiVersion 1.0.0
    * @apiGroup System
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.get('/status', promiseHandler(async () => {
     return new Response(200)
@@ -140,7 +149,7 @@ const main = async () => {
    * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
    * @apiParam (Unregistered) {String{uuid4}} properties.distinct_id The id of the anon user required for client to pass if user is unregistered (forbidden if user is registered)
    * @apiParam {String} properties.appId The application
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/event', promiseHandler(withBadEventHandling(log, withOptionalAuth(async req => {
     validateInput(req.body, Joi.object({
@@ -169,7 +178,7 @@ const main = async () => {
    * @apiVersion 1.0.0
    * @apiGroup Events
    * @apiParam {String} anonId The distinct id of an anonymous user, this is required
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/identify', promiseHandler(withAuth(async req => {
     validateInput(req.body, Joi.object({ anonId: identifySchema }))
@@ -195,7 +204,7 @@ const main = async () => {
    * @apiName syncProfile
    * @apiVersion 1.0.0
    * @apiGroup Profile
-   * @apiSuccess (Success 200) -
+   * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/syncProfile', promiseHandler(withAuth(async req => {
     const res = await fetchOk(

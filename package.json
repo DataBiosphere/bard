@@ -12,7 +12,8 @@
     "express": "^4.18.1",
     "joi": "^17.6.0",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "swagger-ui-express": "^5.0.0"
   },
   "resolutions": {
     "glob": "^9.0.0",
@@ -20,18 +21,18 @@
     "semver": "^7.5.2"
   },
   "scripts": {
-    "generate-docs": "apidoc -i src -o docs",
+    "generate-docs": "apidoc -i src -o docs && yarn generate-swagger",
+    "generate-swagger": "apidoc-openapi -p ./swagger-config/apidoc-for-swagger.json  -s ./src/ -o ./docs/swagger.json && yarn finalize-swagger",
+    "finalize-swagger": "json-merger -o ./docs/swagger.json -p ./docs/swagger.json ./swagger-config/swagger-overlay.json",
     "lint": "eslint \"src/**/*.js\"",
     "start": "node src/server.js",
     "start-dev": "nodemon"
   },
   "devDependencies": {
     "apidoc": "^0.51.1",
+    "@forfuture/apidoc-openapi": "^0.0.1",
     "eslint": "^6.7.2",
+    "json-merger": "^1.1.10",
     "nodemon": "^2.0.19"
-  },
-  "apidoc": {
-    "name": "bard",
-    "version": "1.0.0"
   }
 }

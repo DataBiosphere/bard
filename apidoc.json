@@ -1,0 +1,5 @@
+{
+  "name": "bard",
+  "version": "1.0.0",
+  "description": "A lightweight service to handle tracking user and api events in a compliant manner"
+}
