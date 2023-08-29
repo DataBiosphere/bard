@@ -25,14 +25,22 @@
     "generate-swagger": "apidoc-openapi -p ./swagger-config/apidoc-for-swagger.json  -s ./src/ -o ./docs/swagger.json && yarn finalize-swagger",
     "finalize-swagger": "json-merger -o ./docs/swagger.json -p ./docs/swagger.json ./swagger-config/swagger-overlay.json",
     "lint": "eslint \"src/**/*.js\"",
+    "test": "jest --detectOpenHandles --forceExit",
+    "test-interactive": "jest --watchAll",
+    "debug": "node --debug-brk --inspect ./node_modules/.bin/jest -i",
     "start": "node src/server.js",
     "start-dev": "nodemon"
   },
   "devDependencies": {
-    "apidoc": "^0.51.1",
     "@forfuture/apidoc-openapi": "^0.0.1",
-    "eslint": "^6.7.2",
+    "apidoc": "^0.51.1",
+    "eslint": "^8.48.0",
+    "eslint-plugin-jest": "^27.2.3",
+    "jest": "^29.6.4",
+    "jest-when": "^3.6.0",
     "json-merger": "^1.1.10",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "superagent": "^8.1.2",
+    "supertest": "^6.3.3"
   }
 }
