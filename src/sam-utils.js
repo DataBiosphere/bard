@@ -1,4 +1,4 @@
-const { samRoot} = require('./config')
+const { samRoot } = require('./config')
 const { fetchOk, Response } = require('./utils')
 
 // Verify the user's auth token with Sam

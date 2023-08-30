@@ -64,13 +64,12 @@ const withBadEventHandling = (log, wrappedFn) => async (req, ...args) => {
   }
 }
 
-/* 
- * Note: the app object may be being constructed when used from another module.  
+/*
+ * Note: the app object may be being constructed when used from another module.
  */
-const app = express();
+const app = express()
 
 const main = async () => {
-
   const token = await getSecret({ project, secretName: 'mixpanel-api' })
   const log = logger({ project, logName: 'metrics' })
 

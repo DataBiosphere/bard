@@ -1,6 +1,6 @@
 const request = require('supertest')
-const { v4 } = require('uuid') 
-const { when } = require('jest-when');
+const { v4 } = require('uuid')
+const { when } = require('jest-when')
 const app = require('./app')
 const { logger } = require('./google-utils')
 const { fetchOk } = require('./utils')
@@ -12,8 +12,10 @@ const mixpanelToken = 'superdupersecret'
 const userAnonymousGroup = 'foo@support.firecloud.org'
 const userEmail = 'myemail@foo.com'
 
-// Call counters.  Spying doesn't seem to be reliable when direftly interacting with functions so we manage our
-// own call counters.  We increment them on mock implementations
+/*
+ * Call counters.  Spying doesn't seem to be reliable when direftly interacting with functions so we manage our
+ * own call counters.  We increment them on mock implementations
+ */
 const numTimesVerifyAuthCalled = [0]
 const numTimesFetchMixpanelCalled = [0]
 const numTimesSyncProfileCalled = [0]
@@ -26,24 +28,24 @@ jest.mock('./config', () => ({
 }))
 
 jest.mock('./google-utils', () => {
-  const originalModule = jest.requireActual('./google-utils');
+  const originalModule = jest.requireActual('./google-utils')
   // Jest is strict about nesting mocked unless you name the function something that starts with 'mock'
-  const mockLog = jest.fn(message => {})
+  const mockLog = jest.fn(() => {})
   return {
     ...originalModule,
     logger: jest.fn(() => mockLog),
-    getSecret: jest.fn(() => mixpanelToken),
-  };
-});
-let log = logger({ project: 'test', logName: 'test' })
+    getSecret: jest.fn(() => mixpanelToken)
+  }
+})
+const log = logger({ project: 'test', logName: 'test' })
 
 jest.mock('./utils', () => {
-  const originalModule = jest.requireActual('./utils');
+  const originalModule = jest.requireActual('./utils')
   return {
     ...originalModule,
-    fetchOk: jest.fn(() => { Promise.resolve({ status: 200 })}),
-  };
-});
+    fetchOk: jest.fn(() => { Promise.resolve({ status: 200 }) })
+  }
+})
 
 // Tests
 beforeEach(() => {
@@ -55,8 +57,8 @@ beforeEach(() => {
 
 describe('Test the root path', () => {
   test('calling status returns 200', async () => {
-    const response = await request(app).get('/status');
-    expect(response.statusCode).toBe(200);
+    const response = await request(app).get('/status')
+    expect(response.statusCode).toBe(200)
   })
 })
 
@@ -92,7 +94,7 @@ describe('Test sending events', () => {
 
   test('calling event with post happy path (unauthed) - no mixpanel', async () => {
     const response = await request(app).post('/api/event')
-      .send({ event: 'foo', properties: { appId: 'test', 'distinct_id': distinctId , pushToMixpanel: false }})
+      .send({ event: 'foo', properties: { appId: 'test', 'distinct_id': distinctId, pushToMixpanel: false } })
     expect(response.statusCode).toBe(200)
     expect(log).toHaveBeenCalledTimes(1)
     expect(log.mock.calls[0][0].properties.terra_user_id).toBeUndefined()
@@ -135,14 +137,14 @@ describe('Test sending events', () => {
   })
 
   test('calling event with post fails with invalid distinct_i', async () => {
-    const response = await request(app).post('/api/event').send({ event: 'foo', properties: { distinct_id: 'notuuid' } })
+    const response = await request(app).post('/api/event').send({ event: 'foo', properties: { 'distinct_id': 'notuuid' } })
     expect(response.statusCode).toBe(400)
   })
 
   test('calling event with post fails with distinct_id and user', async () => {
     mockEnabledUserSamAuthCall()
     const response = await request(app).post('/api/event')
-      .send({ event: 'foo', properties: { appId: 'test', distinct_id: distinctId } })
+      .send({ event: 'foo', properties: { appId: 'test', 'distinct_id': distinctId } })
       .set('Authorization', 'Bearer mysupersecrettoken')
     expect(response.statusCode).toBe(400)
   })
@@ -224,7 +226,6 @@ describe('Test syncing profiles', () => {
     const response = await request(app).post('/api/syncProfile')
     expect(response.statusCode).toBe(403)
   })
-
 })
 
 // Helpers
@@ -234,7 +235,7 @@ const mockSuccessfulMixpanelEventTrackCall = () =>
       numTimesFetchMixpanelCalled[0]++
       return { text: () => ('1') }
     })
-  
+
 const mockSuccessfulMixpanelEngageTrackCall = () =>
   when(fetchOk).calledWith(expect.stringContaining('https://api.mixpanel.com/engage'), expect.anything())
     .mockImplementation(() => {
@@ -263,7 +264,12 @@ const mockOrchestrationCall = () =>
     .calledWith('test-orchestration/register/profile', expect.anything())
     .mockImplementation(() => {
       numTimesSyncProfileCalled[0]++
-      return { json: () => ({ keyValuePairs: [
-        { key: 'anonymousGroup', value: userAnonymousGroup },
-        { key: 'email', value: userEmail }] }) }
+      return {
+        json: () => ({
+          keyValuePairs: [
+            { key: 'anonymousGroup', value: userAnonymousGroup },
+            { key: 'email', value: userEmail }
+          ]
+        })
+      }
     })

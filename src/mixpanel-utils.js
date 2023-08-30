@@ -16,4 +16,4 @@ const fetchMixpanel = async (url, { data, ...options } = {}) => {
 
 module.exports = {
   fetchMixpanel
-};
+}
