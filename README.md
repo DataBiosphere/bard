@@ -39,7 +39,24 @@ Note that there is currently no separate development environment for mixpanel, s
 5. Lint any code changes using 
 
     ```sh
-    yarn run lint
+    yarn lint
+    ```
+6. Test any code changes using
+
+    ```sh
+    yarn test 
+    ```
+
+    While developing tests, it may be helpful to run the tests in watch (interactive) mode using
+
+    ```sh
+    yarn test-interactive
+    ```
+
+    Note: to run tests, you must first generate docs using
+
+    ```sh
+    yarn generate-docs
     ```
 
 
