@@ -1,3 +1,5 @@
+const fetch = require('node-fetch')
+
 class Response {
   constructor(status, data) {
     this.status = status
@@ -28,9 +30,29 @@ const validateInput = (value, schema) => {
   }
 }
 
+const delay = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+const fetchOk = async (url, { serviceName, ...options } = {}) => {
+  const res = await fetch(url, options).catch(() => {
+    throw new Response(503, `Unable to contact ${serviceName} service`)
+  })
+  if (res.status === 401) {
+    throw new Response(401, 'Unauthorized')
+  }
+  if (!res.ok) {
+    console.error(`${serviceName} error`, await res.text())
+    throw new Response(503, `Failed to query ${serviceName} service`)
+  }
+  return res
+}
+
 module.exports = {
   Response,
   promiseHandler,
   redirectHandler,
-  validateInput
+  validateInput,
+  delay,
+  fetchOk
 }

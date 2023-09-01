@@ -44,6 +44,7 @@ jobs:
             - ~/.cache/yarn
       - run: yarn lint
       - run: yarn generate-docs
+      - run: yarn test
       - persist_to_workspace:
           root: .
           paths:

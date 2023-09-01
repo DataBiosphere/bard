@@ -2,11 +2,13 @@ module.exports = {
   'extends': 'eslint:recommended',
   'env': {
     'node': true,
-    'es6': true
+    'es6': true,
+    'jest/globals': true
   },
   'parserOptions': {
     'ecmaVersion': 2018
   },
+  'plugins': ['jest'],
   'rules': {
     'array-bracket-newline': ['error', 'consistent'],
     'array-bracket-spacing': 'error',
