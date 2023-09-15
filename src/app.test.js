@@ -60,6 +60,11 @@ describe('Test the root path', () => {
     const response = await request(app).get('/status')
     expect(response.statusCode).toBe(200)
   })
+
+  test('should return strict-transport-security headers', async () => {
+    const response = await request(app).get('/status')
+    expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
+  })
 })
 
 describe('Test static docs', () => {
