@@ -1,7 +1,6 @@
 const _ = require('lodash/fp')
 const express = require('express')
 const cors = require('cors')
-const https = require('https')
 const bodyParser = require('body-parser')
 const { promiseHandler, Response, validateInput, redirectHandler, fetchOk, delay } = require('./utils')
 const { fetchMixpanel } = require('./mixpanel-utils')
