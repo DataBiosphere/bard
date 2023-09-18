@@ -91,6 +91,7 @@ describe('Test sending events', () => {
     const response = await request(app).post('/api/event')
       .send({ event: 'foo', properties: { appId: 'test', 'distinct_id': distinctId } })
     expect(response.statusCode).toBe(200)
+    expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
     expect(log).toHaveBeenCalledTimes(1)
     expect(log.mock.calls[0][0].properties.terra_user_id).toBeUndefined()
     expect(numTimesVerifyAuthCalled[0]).toBe(0)
@@ -172,6 +173,7 @@ describe('Test identifying users', () => {
     const response = await request(app).post('/api/identify')
       .send({ anonId: distinctId })
     expect(response.statusCode).toBe(200)
+    expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
     expect(log).toHaveBeenCalledTimes(1)
     expect(log.mock.calls[0][0]).toEqual({
       event: '$identify',
@@ -206,6 +208,7 @@ describe('Test syncing profiles', () => {
     mockSuccessfulMixpanelEngageTrackCall()
     const response = await request(app).post('/api/syncProfile')
     expect(response.statusCode).toBe(200)
+    expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
     expect(log).toHaveBeenCalledTimes(1)
     expect(log.mock.calls[0][0]).toEqual({
       '$token': mixpanelToken,
