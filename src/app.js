@@ -83,6 +83,10 @@ const main = async () => {
   app.use('/swagger', swaggerUi.serve,   swaggerUi.setup(swaggerDocument, options))
   // Redirect the root to the swagger ui
   app.get('/', redirectHandler('/swagger'))
+  app.use((req, res, next) => {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+    next()
+  })
 
   /**
    * @api {get} /status System status
