@@ -162,3 +162,19 @@ Example:
 
   This will also generate a swagger.json file at docs/swagger.json.  The swagger UI can be viewed by going to the
   root of the server (e.g. https://terra-bard-dev.appspot.com/docs)
+
+## Bard Client
+Bard jakarta-based Client Library for compatibility with Java clients running Spring Boot 3.
+
+## Publish a new version
+To publish a new version of this client library:
+
+1. run `yarn publish-client`
+
+## Build a local JAR for development
+
+1. run `yarn generate-client`
+1. Navigate to the `client-resttemplate` directory
+2. Run `./gradlew assemble`
+3. Find the generated JAR file in `./build/libs`
+4. Replace the dependency in your other project with the newly generated JAR
