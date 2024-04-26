@@ -116,15 +116,28 @@ const main = async () => {
 
   /**
    * @api {post} /api/event Log a user event
-   * @apiDescription Records the event to a log and optionally forwards it to mixpanel. Optionally takes an authorization token which must be verified with Sam.
-   *                 If properties['pushToMixpanel'] is false, only log the event (the property defaults to true). The logs will still get sent to BigQuery via a log sink.
+   * @apiDescription Records the event to a log and optionally forwards it to mixpanel.
+   * Optionally takes an authorization token which must be verified with Sam.
+   *
+   * * properties.appId is required and must be a string.
+   *
+   * * properties.distinct_id is required for unregistered users and forbidden for registered users.
+   *
+   * * properties.pushToMixpanel optional (Default: true). If false, only log the event. The logs will still get sent to BigQuery via a log sink.
    * @apiName event
    * @apiVersion 1.0.0
    * @apiGroup Events
+   *
    * @apiParam {String} event Name of the event
    * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
-   * @apiParam (Unregistered) {String{uuid4}} properties.distinct_id The id of the anon user required for client to pass if user is unregistered (forbidden if user is registered)
-   * @apiParam {String} properties.appId The application
+   * @apiParamExample {json} Event:
+   * {
+   *  "event": "drshub:api",
+   *  "properties": {
+   *    "appId": "drshub", // Required
+   *    "distinct_id": "123e4567-e89b-12d3-a456-426614174000", // Required for unregistered users. Forbidden for registered users
+   *    "pushToMixpanel": false, // Optional, defaults to true
+   *  }
    * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/event', promiseHandler(withBadEventHandling(log, withOptionalAuth(async req => {
