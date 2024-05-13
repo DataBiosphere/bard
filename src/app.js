@@ -174,7 +174,7 @@ const main = async () => {
    *
    * @apiParam {String} eventName Name of the event
    * @apiParam {String} appId Name of the application
-   * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
+   * @apiParam {Map} properties Properties associated with this event. Additional application defined fields can also be used.
    * @apiParamExample {json} Event:
    * {
    *  "properties": {
