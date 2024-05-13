@@ -165,8 +165,6 @@ const main = async () => {
    * @apiDescription Records the event to a log and optionally forwards it to mixpanel.
    * Optionally takes an authorization token which must be verified with Sam.
    *
-   * * properties.appId is required and must be a string.
-   *
    * * properties.distinct_id is required for unregistered users and forbidden for registered users.
    *
    * * properties.pushToMixpanel optional (Default: true). If false, only log the event. The logs will still get sent to BigQuery via a log sink.
