@@ -161,6 +161,54 @@ const main = async () => {
   }))))
 
   /**
+   * @api {post} /api/eventLog/v1/:appId/:eventName Log a user event
+   * @apiDescription Records the event to a log and optionally forwards it to mixpanel.
+   * Optionally takes an authorization token which must be verified with Sam.
+   *
+   * * properties.appId is required and must be a string.
+   *
+   * * properties.distinct_id is required for unregistered users and forbidden for registered users.
+   *
+   * * properties.pushToMixpanel optional (Default: true). If false, only log the event. The logs will still get sent to BigQuery via a log sink.
+   * @apiName eventLog
+   * @apiVersion 1.0.0
+   * @apiGroup Events
+   *
+   * @apiParam {String} eventName Name of the event
+   * @apiParam {String} appId Name of the application
+   * @apiParam {Object} properties Properties associated with this event. Additional application defined fields can also be used.
+   * @apiParamExample {json} Event:
+   * {
+   *  "properties": {
+   *    "distinct_id": "123e4567-e89b-12d3-a456-426614174000", // Required for unregistered users. Forbidden for registered users
+   *    "pushToMixpanel": false, // Optional, defaults to true
+   *  }
+   * @apiSuccess (200) {String} response An empty string
+   */
+  app.post('/api/eventLog/v1/:appId/:eventName', promiseHandler(withBadEventHandling(log, withOptionalAuth(async req => {
+    validateInput(req.body, Joi.object({
+      properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
+    }))
+    const appId = req.params.appId
+    const eventName = req.params.eventName
+    const data = _.update('properties', properties => ({
+      ...properties,
+      token,
+      'distinct_id': req.user ? userDistinctId(req.user) : properties.distinct_id
+    }), req.body)
+    const properties = data['properties']
+    data['event'] = eventName
+    data['properties']['appId'] = appId
+    const promises = [log(decorateWithInternalProperties(req, data))]
+    const pushToMixpanel = properties['pushToMixpanel'] !== false
+    if (pushToMixpanel) {
+      promises.push(token && fetchMixpanel('track', { data }))
+    }
+    await Promise.all(promises)
+    return new Response(200)
+  }))))
+
+  /**
    * @api {post} /api/identify Merge two user id's
    * @apiDescription Calls MixPanel's `$identify` endpoint to merge the included distinct_ids. This merges the client generated id, used for anonymous, non-authenticated metrics with the Bard auto-generated `distinct_id` to link an anonymous session with a user. Requires an authorization token that is verified with Sam
    * @apiName identify
