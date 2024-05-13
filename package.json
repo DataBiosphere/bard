@@ -1,6 +1,6 @@
 {
   "name": "bard",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "src/server.js",
   "license": "MIT",
   "dependencies": {
