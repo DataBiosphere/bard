@@ -4,6 +4,7 @@ const { when } = require('jest-when')
 const app = require('./app')
 const { logger } = require('./google-utils')
 const { fetchOk } = require('./utils')
+const { jwtDecode } = require('jwt-decode')
 
 // Constants
 const distinctId = v4()
@@ -45,6 +46,21 @@ jest.mock('./utils', () => {
     ...originalModule,
     fetchOk: jest.fn(() => { Promise.resolve({ status: 200 }) })
   }
+})
+
+jest.mock('jwt-decode', () => {
+  return {
+    jwtDecode: jest.fn()
+  }
+})
+
+jest.mock('node-cache', () => {
+  return jest.fn(() => {
+    return {
+      get: jest.fn(() => {}),
+      set: jest.fn(() => {})
+    }
+  })
 })
 
 // Tests
@@ -171,7 +187,7 @@ describe('Test identifying users', () => {
   test('calling identify user happy path', async () => {
     mockEnabledUserSamAuthCall()
     const response = await request(app).post('/api/identify')
-      .send({ anonId: distinctId })
+      .send({ anonId: distinctId }).set('Authorization', 'Bearer abc123')
     expect(response.statusCode).toBe(200)
     expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
     expect(log).toHaveBeenCalledTimes(1)
@@ -189,14 +205,14 @@ describe('Test identifying users', () => {
   test('calling identify user fails when user disabled', async () => {
     mockDisabledUserSamAuthCall()
     const response = await request(app).post('/api/identify')
-      .send({ anonId: distinctId })
+      .send({ anonId: distinctId }).set('Authorization', 'Bearer abc123')
     expect(response.statusCode).toBe(403)
   })
 
   test('calling identify user fails with no anonId', async () => {
     mockEnabledUserSamAuthCall()
     const response = await request(app).post('/api/identify')
-      .send({})
+      .send({}).set('Authorization', 'Bearer abc123')
     expect(response.statusCode).toBe(400)
   })
 })
@@ -206,7 +222,7 @@ describe('Test syncing profiles', () => {
     mockEnabledUserSamAuthCall()
     mockOrchestrationCall()
     mockSuccessfulMixpanelEngageTrackCall()
-    const response = await request(app).post('/api/syncProfile')
+    const response = await request(app).post('/api/syncProfile').set('Authorization', 'Bearer abc123')
     expect(response.statusCode).toBe(200)
     expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
     expect(log).toHaveBeenCalledTimes(1)
@@ -231,7 +247,7 @@ describe('Test syncing profiles', () => {
     mockDisabledUserSamAuthCall(terraUserId)
     mockOrchestrationCall()
     mockSuccessfulMixpanelEngageTrackCall()
-    const response = await request(app).post('/api/syncProfile')
+    const response = await request(app).post('/api/syncProfile').set('Authorization', 'Bearer abc123')
     expect(response.statusCode).toBe(403)
   })
 })
@@ -251,21 +267,25 @@ const mockSuccessfulMixpanelEngageTrackCall = () =>
       return { text: () => ('1') }
     })
 
-const mockEnabledUserSamAuthCall = () =>
+const mockEnabledUserSamAuthCall = () => {
+  when(jwtDecode).calledWith(expect.anything()).mockImplementation(() => ({ email: 'fake@fake.com' }))
   when(fetchOk)
     .calledWith('test-sam/register/user/v2/self/info', expect.anything())
     .mockImplementation(() => {
       numTimesVerifyAuthCalled[0]++
       return { json: () => ({ enabled: true, userSubjectId: terraUserId }) }
     })
+}
 
-const mockDisabledUserSamAuthCall = () =>
+const mockDisabledUserSamAuthCall = () => {
+  when(jwtDecode).calledWith(expect.anything()).mockImplementation(() => ({ email: 'fake@fake.com' }))
   when(fetchOk)
     .calledWith('test-sam/register/user/v2/self/info', expect.anything())
     .mockImplementation(() => {
       numTimesVerifyAuthCalled[0]++
       return { json: () => ({ enabled: false, userSubjectId: terraUserId }) }
     })
+}
 
 const mockOrchestrationCall = () =>
   when(fetchOk)
