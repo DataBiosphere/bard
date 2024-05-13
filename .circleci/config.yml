@@ -3,7 +3,7 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: node:16
+      - image: node:20
         user: node
   gcloud:
     docker:
