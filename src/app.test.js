@@ -144,7 +144,7 @@ describe('Test sending events', () => {
     mockSuccessfulMixpanelEventTrackCall()
     mockEnabledUserSamAuthCall()
     const response = await request(app).post('/api/eventLog/v1/test/foo')
-      .send({ event: 'foo', properties: { pushToMixpanel: false } })
+      .send({ properties: { testProperty: 'foo' } })
       .set('Authorization', 'Bearer mysupersecrettoken')
     expect(response.statusCode).toBe(200)
     expect(log).toHaveBeenCalledTimes(1)
