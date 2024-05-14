@@ -35,7 +35,7 @@ const verifyAuth = async req => {
   } catch (e) {
     // If the token is invalid we assume the request would have been rejected by sam's proxy anyways
     if (e instanceof InvalidTokenError) {
-      console.warn(`Invalid token from <${req.headers.host}> "${e.message}"`)
+      console.warn(`Invalid token from <appId|"${req.body.properties.appId}"> <event|"${req.body.event}"> <error|"${e.message}">`)
       throw new Response(401, 'Invalid auth token')
     } else {
       throw e
