@@ -139,6 +139,19 @@ describe('Test sending events', () => {
     expect(numTimesVerifyAuthCalled[0]).toBe(1)
   })
 
+  // v2 API endpoint
+  test('calling event with post happy path V2 (authed)', async () => {
+    mockSuccessfulMixpanelEventTrackCall()
+    mockEnabledUserSamAuthCall()
+    const response = await request(app).post('/api/event/test/foo')
+        .send({ event: 'foo', properties: { pushToMixpanel: false } })
+        .set('Authorization', 'Bearer mysupersecrettoken')
+    expect(response.statusCode).toBe(200)
+    expect(log).toHaveBeenCalledTimes(1)
+    expect(log.mock.calls[0][0].properties.terra_user_id).toBe(terraUserId)
+    expect(numTimesVerifyAuthCalled[0]).toBe(1)
+  })
+
   // Negative cases
   test('calling event with get fails', async () => {
     const response = await request(app).get('/api/event')
