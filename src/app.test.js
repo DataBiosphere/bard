@@ -49,7 +49,9 @@ jest.mock('./utils', () => {
 })
 
 jest.mock('jwt-decode', () => {
+  const originalModule = jest.requireActual('jwt-decode')
   return {
+    ...originalModule,
     jwtDecode: jest.fn()
   }
 })
