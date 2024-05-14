@@ -108,8 +108,7 @@ const main = async () => {
     }),
     time: Joi.any().forbidden(),
     ip: Joi.any().forbidden(),
-    name: Joi.any().forbidden(),
-    appId: Joi.string().required()
+    name: Joi.any().forbidden()
   }).pattern(Joi.string().pattern(/^(\$|mp_)/, { invert: true }), Joi.any().required()).required()
 
   const identifySchema = Joi.string().guid({ version: 'uuidv4' }).required()
@@ -141,9 +140,10 @@ const main = async () => {
    * @apiSuccess (200) {String} response An empty string
    */
   app.post('/api/event', promiseHandler(withBadEventHandling(log, withOptionalAuth(async req => {
+    const propertiesSchemaV1 = propertiesSchema.tailor({ appId: Joi.string().required() })
     validateInput(req.body, Joi.object({
       event: eventSchema,
-      properties: propertiesSchema.tailor(req.user ? 'authenticated' : 'unauthenticated')
+      properties: propertiesSchemaV1.tailor(req.user ? 'authenticated' : 'unauthenticated')
     }))
     const data = _.update('properties', properties => ({
       ...properties,

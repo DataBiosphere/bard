@@ -139,6 +139,19 @@ describe('Test sending events', () => {
     expect(numTimesVerifyAuthCalled[0]).toBe(1)
   })
 
+  // v2 API endpoint
+  test('calling event with post happy path V2 (authed)', async () => {
+    mockSuccessfulMixpanelEventTrackCall()
+    mockEnabledUserSamAuthCall()
+    const response = await request(app).post('/api/eventLog/v1/test/foo')
+      .send({ properties: { testProperty: 'foo' } })
+      .set('Authorization', 'Bearer mysupersecrettoken')
+    expect(response.statusCode).toBe(200)
+    expect(log).toHaveBeenCalledTimes(1)
+    expect(log.mock.calls[0][0].properties.terra_user_id).toBe(terraUserId)
+    expect(numTimesVerifyAuthCalled[0]).toBe(1)
+  })
+
   // Negative cases
   test('calling event with get fails', async () => {
     const response = await request(app).get('/api/event')
@@ -155,12 +168,17 @@ describe('Test sending events', () => {
     expect(response.statusCode).toBe(400)
   })
 
+  test('calling event with post fails with no appId in properties', async () => {
+    const response = await request(app).post('/api/event').send({ event: 'foo', properties: {} })
+    expect(response.statusCode).toBe(400)
+  })
+
   test('calling event with post fails with insufficient properties', async () => {
     const response = await request(app).post('/api/event').send({ event: 'foo', properties: { appId: 'test' } })
     expect(response.statusCode).toBe(400)
   })
 
-  test('calling event with post fails with invalid distinct_i', async () => {
+  test('calling event with post fails with invalid distinct_id', async () => {
     const response = await request(app).post('/api/event').send({ event: 'foo', properties: { 'distinct_id': 'notuuid' } })
     expect(response.statusCode).toBe(400)
   })
