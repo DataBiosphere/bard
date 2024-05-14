@@ -168,12 +168,17 @@ describe('Test sending events', () => {
     expect(response.statusCode).toBe(400)
   })
 
+  test('calling event with post fails with no appId in properties', async () => {
+    const response = await request(app).post('/api/event').send({ event: 'foo', properties: {} })
+    expect(response.statusCode).toBe(400)
+  })
+
   test('calling event with post fails with insufficient properties', async () => {
     const response = await request(app).post('/api/event').send({ event: 'foo', properties: { appId: 'test' } })
     expect(response.statusCode).toBe(400)
   })
 
-  test('calling event with post fails with invalid distinct_i', async () => {
+  test('calling event with post fails with invalid distinct_id', async () => {
     const response = await request(app).post('/api/event').send({ event: 'foo', properties: { 'distinct_id': 'notuuid' } })
     expect(response.statusCode).toBe(400)
   })
