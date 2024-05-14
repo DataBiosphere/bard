@@ -143,7 +143,7 @@ describe('Test sending events', () => {
   test('calling event with post happy path V2 (authed)', async () => {
     mockSuccessfulMixpanelEventTrackCall()
     mockEnabledUserSamAuthCall()
-    const response = await request(app).post('/api/event/test/foo')
+    const response = await request(app).post('/api/eventLog/v1/test/foo')
       .send({ event: 'foo', properties: { pushToMixpanel: false } })
       .set('Authorization', 'Bearer mysupersecrettoken')
     expect(response.statusCode).toBe(200)
