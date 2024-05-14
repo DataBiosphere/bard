@@ -166,10 +166,19 @@ Example:
 ## Bard Client
 Bard jakarta-based Client Library for compatibility with Java clients running Spring Boot 3.
 
-## Publish a new version
+### Publish a new version
 To publish a new version of this client library:
 
 1. run `yarn publish-client`
+
+## Bard Client JavaX
+Bard javax-based Client Library for compatibility with Java clients running Spring Boot 3.
+This is needed because some systems are still on Java 11 and cannot use the Jakarta-based client.
+
+### Publish a new version
+To publish a new version of this client library:
+
+1. run `yarn publish-client-javax`
 
 ## Build a local JAR for development
 
