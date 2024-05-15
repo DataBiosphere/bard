@@ -4,7 +4,7 @@ const { when } = require('jest-when')
 const app = require('./app')
 const { logger } = require('./google-utils')
 const { fetchOk } = require('./utils')
-const { jwtDecode } = require('jwt-decode')
+const { samUserCache } = require('./sam-utils')
 
 // Constants
 const distinctId = v4()
@@ -48,26 +48,10 @@ jest.mock('./utils', () => {
   }
 })
 
-jest.mock('jwt-decode', () => {
-  const originalModule = jest.requireActual('jwt-decode')
-  return {
-    ...originalModule,
-    jwtDecode: jest.fn()
-  }
-})
-
-jest.mock('node-cache', () => {
-  return jest.fn(() => {
-    return {
-      get: jest.fn(() => {}),
-      set: jest.fn(() => {})
-    }
-  })
-})
-
 // Tests
 beforeEach(() => {
   jest.resetAllMocks()
+  samUserCache.flushAll()
   numTimesVerifyAuthCalled[0] = 0
   numTimesFetchMixpanelCalled[0] = 0
   numTimesSyncProfileCalled[0] = 0
@@ -136,6 +120,26 @@ describe('Test sending events', () => {
     expect(response.statusCode).toBe(200)
     expect(log).toHaveBeenCalledTimes(1)
     expect(log.mock.calls[0][0].properties.terra_user_id).toBe(terraUserId)
+    expect(numTimesVerifyAuthCalled[0]).toBe(1)
+  })
+
+  test('calling event with caching behavior', async () => {
+    mockSuccessfulMixpanelEventTrackCall()
+    mockEnabledUserSamAuthCall()
+
+    const response1 = await request(app).post('/api/event')
+      .send({ event: 'foo', properties: { appId: 'test' } })
+      .set('Authorization', 'Bearer mysupersecrettoken')
+    expect(response1.statusCode).toBe(200)
+
+    expect(numTimesVerifyAuthCalled[0]).toBe(1)
+
+    const response2 = await request(app).post('/api/event')
+      .send({ event: 'foo', properties: { appId: 'test' } })
+      .set('Authorization', 'Bearer mysupersecrettoken')
+    expect(response2.statusCode).toBe(200)
+
+    // Verify that the user was only been fetched once
     expect(numTimesVerifyAuthCalled[0]).toBe(1)
   })
 
@@ -288,7 +292,6 @@ const mockSuccessfulMixpanelEngageTrackCall = () =>
     })
 
 const mockEnabledUserSamAuthCall = () => {
-  when(jwtDecode).calledWith(expect.anything()).mockImplementation(() => ({ email: 'fake@fake.com' }))
   when(fetchOk)
     .calledWith('test-sam/register/user/v2/self/info', expect.anything())
     .mockImplementation(() => {
@@ -298,7 +301,6 @@ const mockEnabledUserSamAuthCall = () => {
 }
 
 const mockDisabledUserSamAuthCall = () => {
-  when(jwtDecode).calledWith(expect.anything()).mockImplementation(() => ({ email: 'fake@fake.com' }))
   when(fetchOk)
     .calledWith('test-sam/register/user/v2/self/info', expect.anything())
     .mockImplementation(() => {
