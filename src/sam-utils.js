@@ -16,7 +16,6 @@ async function getSamUser(req) {
 
 // Verify the user's auth token with Sam
 const verifyAuth = async req => {
-  // If no email is in the jwt skip checking the cache.
   const maybeCachedUser = samUserCache.get(req.headers.authorization)
 
   if (maybeCachedUser === undefined) {
