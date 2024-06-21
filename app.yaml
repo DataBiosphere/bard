@@ -3,3 +3,6 @@ handlers:
 - url: /.*
   secure: always
   script: auto
+automatic_scaling:
+  min_instances: 3
+  max_pending_latency: 500ms
