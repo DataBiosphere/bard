@@ -19,7 +19,8 @@
   "resolutions": {
     "glob": "^9.0.0",
     "optionator": "^0.9.3",
-    "semver": "^7.5.2"
+    "semver": "^7.5.2",
+    "protobufjs": "^7.2.5"
   },
   "scripts": {
     "generate-docs": "apidoc -i src -o docs && yarn generate-swagger",

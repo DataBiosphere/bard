@@ -59,6 +59,16 @@ Note that there is currently no separate development environment for mixpanel, s
     yarn generate-docs
     ```
 
+### Updating dependencies
+
+- If the library is one of the direct dependencies, update the version in `package.json` and generate an updated `yarn.lock` file as detailed below.
+- If the library is a transitive dependency, delete the entries for the library in `yarn.lock`.
+- Make sure running `yarn --version` outputs the same version as the one [here](https://github.com/DataBiosphere/bard/blob/8298a1d5ff7eb8d754394c166668becddb395de8/.yarnrc#L5).
+- Run `yarn install` to generate the new content in `yarn.lock`. Verify the library versions satisfy the security update.
+- Run `yarn dedupe` to remove duplicated content from the `yarn.lock` file.
+- Create a PR with the modified files.
+
+Note: This is copied from [Terra UI's Wiki](https://github.com/DataBiosphere/terra-ui/wiki/Security-and-Maintenance#dependabot-security-updates). If above steps doesn't work please refer the Wiki and update the above steps as needed.
 
 
 ## Deploying
