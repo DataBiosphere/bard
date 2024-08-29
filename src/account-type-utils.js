@@ -3,7 +3,7 @@ const accountTypeMapping = require('../config/account-types.json')
 
 /**
  * Maps the email domain to an account type.
- * To add or remove types, please refer to the ../config/account-types.json file.
+ * To add or remove types, please refer to the `../config/account-types.json` file.
  * The key is the account type, and the value is the mapped domains.
  *
  * @param {string} email The email address to map.
