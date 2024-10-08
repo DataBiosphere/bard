@@ -49,5 +49,6 @@
     "nodemon": "^2.0.19",
     "superagent": "^8.1.2",
     "supertest": "^6.3.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
