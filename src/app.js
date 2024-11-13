@@ -82,7 +82,7 @@ const main = async () => {
   }
   app.use('/swagger', swaggerUi.serve,   swaggerUi.setup(swaggerDocument, options))
   app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', 'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; style-src \'self\' \'unsafe-inline\'; connect-src \'self\'; form-action \'none\';')
+    res.setHeader('Content-Security-Policy', 'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; style-src \'self\' \'unsafe-inline\'; connect-src \'self\'; form-action \'none\'; frame-ancestors \'none\';')
     next()
   })
   // Redirect the root to the swagger ui
