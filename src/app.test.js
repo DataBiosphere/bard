@@ -77,6 +77,11 @@ describe('Test static docs', () => {
     expect(response.headers).toEqual(expect.objectContaining({ 'content-security-policy': expect.anything() }))
   })
 
+  test('should return content-security-policy headers', async () => {
+    const response = await request(app).get('/swagger/')
+    expect(response.headers).toEqual(expect.objectContaining({ 'content-security-policy': expect.anything() }))
+  })
+
   test('calling docs shows apidocs page', async () => {
     const response = await request(app).get('/docs/')
     expect(response.statusCode).toBe(200)
