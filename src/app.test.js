@@ -82,6 +82,16 @@ describe('Test static docs', () => {
     expect(response.headers).toEqual(expect.objectContaining({ 'content-security-policy': expect.anything() }))
   })
 
+  test('should return strict-transport-security headers', async () => {
+    const response = await request(app).get('/swagger/')
+    expect(response.headers).toEqual(expect.objectContaining({ 'strict-transport-security': expect.anything() }))
+  })
+
+  test('should return x-content-type-options headers', async () => {
+    const response = await request(app).get('/swagger/')
+    expect(response.headers).toEqual(expect.objectContaining({ 'x-content-type-options': 'nosniff' }))
+  })
+
   test('calling docs shows apidocs page', async () => {
     const response = await request(app).get('/docs/')
     expect(response.statusCode).toBe(200)

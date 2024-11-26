@@ -79,6 +79,14 @@ const main = async () => {
     res.setHeader('Content-Security-Policy', 'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; style-src \'self\' \'unsafe-inline\'; connect-src \'self\'; form-action \'none\'; frame-ancestors \'none\';')
     next()
   })
+  app.use((req, res, next) => {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+    next()
+  })
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    next()
+  })
   app.use('/docs', express.static('docs'))
   // Host the swagger ui
   const options = {
@@ -87,10 +95,6 @@ const main = async () => {
   app.use('/swagger', swaggerUi.serve,   swaggerUi.setup(swaggerDocument, options))
   // Redirect the root to the swagger ui
   app.get('/', redirectHandler('/swagger'))
-  app.use((req, res, next) => {
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
-    next()
-  })
   /**
    * @api {get} /status System status
    * @apiName status
