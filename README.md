@@ -105,7 +105,7 @@ The script will copy the appropriate config files out of `./config/` as needed, 
 - All events are logged in the GCP project defined in the Bard environment config file `./config/<env>.json`
 - In the dev and prod environments, log router sinks send all event logs with `logName="projects/terra-bard-dev/logs/metrics"` to a bigQuery dataset.
   - In dev, the log sink ([bq-metrics](https://console.cloud.google.com/logs/router?project=terra-bard-dev)) sends events to:
-    - Project: `broad-dsde-analytics-dev`
+    - Project: `broad-dsde-dev-analytics-dev`
     - Dataset: `warehouse`
     - Table: `metrics`
   - In prod, the log sink ([bq-metrics](https://console.cloud.google.com/logs/router?authuser=3&project=terra-bard-prod)) sends events to:
