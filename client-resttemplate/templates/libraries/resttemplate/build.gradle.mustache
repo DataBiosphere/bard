@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:5.2.0'
+        classpath 'com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.5'
     }
 }
 
@@ -23,7 +23,7 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
 
 {{#useJakartaEe}}
 sourceCompatibility = JavaVersion.VERSION_17
