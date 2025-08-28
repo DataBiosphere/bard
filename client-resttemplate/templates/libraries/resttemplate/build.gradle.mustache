@@ -1,8 +1,5 @@
 {{! based on https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/Java/libraries/resttemplate/build.gradle.mustache }}
 
-group = '{{groupId}}'
-version = '{{artifactVersion}}'
-
 buildscript {
     repositories {
         mavenCentral()
@@ -19,6 +16,9 @@ plugins {
   id "maven-publish"
   id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.5"
 }
+
+group = '{{groupId}}'
+version = '{{artifactVersion}}'
 
 repositories {
   mavenCentral()
