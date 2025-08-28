@@ -1,5 +1,4 @@
 {{! based on https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/Java/libraries/resttemplate/build.gradle.mustache }}
-apply plugin: 'idea'
 
 group = '{{groupId}}'
 version = '{{artifactVersion}}'
@@ -16,11 +15,19 @@ buildscript {
     }
 }
 
-repositories {
-    mavenCentral()
+plugins {
+  id "maven-publish"
+  id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.5"
 }
 
+repositories {
+  mavenCentral()
+  maven {
+    url "artifactregistry://us-central1-maven.pkg.dev/dsp-artifact-registry/libs-release-standard"
+  }
+}
 
+apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
