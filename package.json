@@ -26,7 +26,8 @@
     "path-to-regexp": "^0.1.12",
     "tmp": "^0.2.4",
     "brace-expansion": "^2.0.2",
-    "cookie": "^0.7.0"
+    "cookie": "^0.7.0",
+    "lodash": "^4.18.1"
   },
   "scripts": {
     "generate-docs": "apidoc -i src -o docs && yarn generate-swagger",
