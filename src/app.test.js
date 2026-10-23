@@ -1,5 +1,5 @@
 const request = require('supertest')
-const { v4 } = require('uuid')
+const { randomUUID } = require('crypto')
 const { when } = require('jest-when')
 const app = require('./app')
 const { logger } = require('./google-utils')
@@ -7,7 +7,7 @@ const { fetchOk } = require('./utils')
 const { samUserCache } = require('./sam-utils')
 
 // Constants
-const distinctId = v4()
+const distinctId = randomUUID()
 const terraUserId = '1234'
 const mixpanelToken = 'superdupersecret'
 const userAnonymousGroup = 'foo@support.firecloud.org'
